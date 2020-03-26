@@ -1,0 +1,91 @@
+import matplotlib.pyplot as plt
+import random as random
+
+#About population age triangular distribution
+population_age_start = 0
+population_age_end = 100
+population_age_mode = 26
+
+#About family size triangular distribution
+family_size_start = 1
+family_size_end = 5
+family_size_mode = 1.5
+
+#Limits for triangular distribution for factors
+factor_start = 0.8
+factor_end = 1.2
+factor_mode = 1
+
+#Limits for illness development
+illness_start = 1
+illness_end = 12
+illness_mode = 5
+
+#Limits for triangular distribution for contacts
+contacts_start = 2
+contacts_end = 15
+contacts_mode = 5
+
+#Limits for triangular distribution for human exchange between urban areas
+exchange_start = 4
+exchange_end = 18
+exchange_mode = 8
+
+class Randomization():
+	"Functions to work with the randomization of elements for simulations"
+	
+	def isCarefulAverage(infectedHuman, human):
+		a = (infectedHuman.carefulFactor + human.carefulFactor) / 2
+		return a
+	
+	def isDistancedAverage(infectedHuman, human):
+		a = (infectedHuman.socialDistanceFactor + human.socialDistanceFactor) / 2
+		return a
+	
+	def setFamilySize():
+		s = random.triangular(family_size_start, family_size_end, family_size_mode)
+		s = round(s)
+		return s
+	
+	def setSex():
+		sex = random.choice(["Male", "Female"])
+		return sex
+	
+	def setAge():
+		a = random.triangular(population_age_start, population_age_end, population_age_mode)
+		a = round(a)
+		return a
+	
+	def aRandom():
+		r = random.random()
+		return r
+	
+	def aRandomInt(n, m):
+		r = random.randint(n, m)
+		return r
+	
+	def aRandomIntList(n, m, c):
+		r = random.sample(range(n, m), c)
+		return r
+	
+	def setCarefulFactor():
+		f = random.triangular(factor_start, factor_end, factor_mode)
+		return f
+	
+	def setSocialDistanceFactor():
+		f = random.triangular(factor_start, factor_end,	factor_mode)
+		return f
+	
+	def setIllnessDevelopment():
+		i = random.triangular(illness_start, illness_end, illness_mode)
+		return(round(i, 0))
+	
+	def setContactsCount(govIsolationFactor):
+		c = random.triangular(contacts_start, contacts_end, contacts_mode)
+		c = c / govIsolationFactor
+		return(int(c))
+	
+	def setExchangeCount(govIsolationFactor):
+		c = random.triangular(exchange_start, exchange_end, exchange_mode)
+		c = c / govIsolationFactor
+		return (int(c))
