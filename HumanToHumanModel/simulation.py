@@ -17,6 +17,9 @@ areaBHumans = []
 #Deciding starting point
 casesCeroCount = 1
 
+#Saving government actions start day
+govActionsStartDay = 0
+
 #Simulation statistics
 totalInfected = 0
 totalTested = 0
@@ -58,8 +61,8 @@ class Simulation():
 		
 		vr.startRiskVariables()
 		gov.startColapseVariables()
-		gov.setStartDay(govActionsList[0])
-		gov.setEndDay(govActionsList[1])
+		gov.setStartCaseCount(govActionsList[0])
+		gov.setActionsPeriod(govActionsList[1])
 		
 		Simulation.createHumans(population, simulationName)
 
@@ -72,7 +75,7 @@ class Simulation():
 			if d < period:
 				Simulation.humanExchange(areaAHumans, areaBHumans)
 			
-		evolutionData.to_csv("SimulationData/" + simulationName + ".csv", index=False)
+		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
 			
 		print("Simulation Complete!				", end="\n")
 		print("Infected: " + str(totalInfected) + ", Recovered: " + str(totalRecovered) + ", Deaths: " +
@@ -90,30 +93,32 @@ class Simulation():
 		infectedList = Simulation.getInfectedList(areaAHumans)
 		for i in range(len(infectedList)):
 			index = Simulation.getHumanIndex(areaAHumans, infectedList[i])
-			areaAHumans[index].contacts = Simulation.setHumanContacts(areaAHumans)
-			for f in range (len(areaAHumans[index].family)):
-				indexF = Simulation.getHumanIndex(areaAHumans, areaAHumans[index].family[f])
-				if areaAHumans[indexF].isInfected == False:
-					Simulation.decideInfection(areaAHumans[index], areaAHumans[indexF], "A")
-			for c in range (len(areaAHumans[index].contacts)):
-				indexC = Simulation.getHumanIndex(areaAHumans, areaAHumans[index].contacts[c])
-				if areaAHumans[indexC].isInfected == False:
-					Simulation.decideInfection(areaAHumans[index], areaAHumans[indexC], "A")
+			if areaAHumans[index].isIsolated == False:
+				areaAHumans[index].contacts = Simulation.setHumanContacts(areaAHumans)
+				for f in range (len(areaAHumans[index].family)):
+					indexF = Simulation.getHumanIndex(areaAHumans, areaAHumans[index].family[f])
+					if areaAHumans[indexF].isInfected == False:
+						Simulation.decideInfection(areaAHumans[index], areaAHumans[indexF], "A")
+				for c in range (len(areaAHumans[index].contacts)):
+					indexC = Simulation.getHumanIndex(areaAHumans, areaAHumans[index].contacts[c])
+					if areaAHumans[indexC].isInfected == False:
+						Simulation.decideInfection(areaAHumans[index], areaAHumans[indexC], "A")
 			Simulation.evolInfection(areaAHumans[index], "A")
 
 	def simulateAreaB():
 		infectedList = Simulation.getInfectedList(areaBHumans)
 		for i in range(len(infectedList)):
 			index = Simulation.getHumanIndex(areaBHumans, infectedList[i])
-			areaBHumans[index].contacts = Simulation.setHumanContacts(areaBHumans)
-			for f in range (len(areaBHumans[index].family)):
-				indexF = Simulation.getHumanIndex(areaBHumans, areaBHumans[index].family[f])
-				if areaBHumans[indexF].isInfected == False:
-					Simulation.decideInfection(areaBHumans[index], areaBHumans[indexF], "B")
-			for c in range (len(areaBHumans[index].contacts)):
-				indexC = Simulation.getHumanIndex(areaBHumans, areaBHumans[index].contacts[c])
-				if areaBHumans[indexC].isInfected == False:
-					Simulation.decideInfection(areaBHumans[index], areaBHumans[indexC], "B")
+			if areaBHumans[index].isIsolated == False:
+				areaBHumans[index].contacts = Simulation.setHumanContacts(areaBHumans)
+				for f in range (len(areaBHumans[index].family)):
+					indexF = Simulation.getHumanIndex(areaBHumans, areaBHumans[index].family[f])
+					if areaBHumans[indexF].isInfected == False:
+						Simulation.decideInfection(areaBHumans[index], areaBHumans[indexF], "B")
+				for c in range (len(areaBHumans[index].contacts)):
+					indexC = Simulation.getHumanIndex(areaBHumans, areaBHumans[index].contacts[c])
+					if areaBHumans[indexC].isInfected == False:
+						Simulation.decideInfection(areaBHumans[index], areaBHumans[indexC], "B")
 			Simulation.evolInfection(areaBHumans[index], "B")
 
 	#Deciding infection after checking immunity
@@ -187,21 +192,24 @@ class Simulation():
 		tested = False
 		if notTestedHuman.isSymptomatic == True:
 			if r < gov.getTestingResponseFactor():
-				notTestedHuman.wasTested = True
 				tested = True
 		elif notTestedHuman.isSymptomatic == False:
 			if r < gov.getTestingResponseASFactor():
-				notTestedHuman.wasTested = True
 				tested = True
 		if notTestedHuman.isInTreatment == True: #Probability of being tested in treatment is 1
-			notTestedHuman.wasTested = True
 			tested = True
 		if tested == True:
+			notTestedHuman.wasTested = True
+			Simulation.decideActiveIsolation(notTestedHuman)
 			Simulation.increaseV("totalTested")
 			if area == "A":
 				Simulation.increaseV("ATested")
 			elif area == "B":
 				Simulation.increaseV("BTested")
+				
+	def decideActiveIsolation(human):
+		if gov.getActiveIsolation == True:
+			human.isIsolated = True
 	
 	#Deciding if a human will die
 	def decideDeath(human):
@@ -316,15 +324,18 @@ class Simulation():
 				inTreatment = True
 		return inTreatment
 		
-	def checkGovermentActions(day, govActionsList):
-		if day == gov.getStartDay():
+	def checkGovermentActions(actualDay, govActionsList):
+		if totalTested >= gov.getStartCaseCount():
+			global govActionsStartDay
+			govActionsStartDay = actualDay
 			gov.setInfoFactor(govActionsList[2])
 			gov.setIsolationFactor(govActionsList[3])
 			gov.setSocialDistanceFactor(govActionsList[4])
-			gov.setLockDown(govActionsList[5])
-			gov.setTestingResponseFactor(govActionsList[6])
-			gov.setTestingResponseASFactor(govActionsList[7])
-		if day == gov.getEndDay():
+			gov.setActiveIsolation(govActionsList[5])
+			gov.setLockDown(govActionsList[6])
+			gov.setTestingResponseFactor(govActionsList[7])
+			gov.setTestingResponseASFactor(govActionsList[8])
+		if actualDay == govActionsStartDay + gov.getActionsPeriod():
 			gov.resetCountermeasures()
 	
 	######################################################################################################

@@ -1,4 +1,3 @@
-from processingdata import ProcessingData as dt
 from simulation import Simulation as sim
 from visualization import Visualization as vz
 
@@ -9,19 +8,24 @@ print("---------------------------------")
 print("---https://github/rvalla/SETM----")
 print("#################################")
 
-simulationsPeriod = 60
+simulationsPeriod = 120
 simulationsPopulation = 1000
 simulationsCount = 1
-simulationName = "26032020_testing_"
+simulationName = "27032020_testing_GovLocDown"
 
 #Government countermeasures
 #Passing the values for government actions in order:
-#startDay, endDay, infoFactor, isolationFactor, socialDistanceFactor, lockDown, testing, testingAS
+#startCaseCount, actionsPeriod, infoFactor, isolationFactor, socialDistanceFactor,
+#	activeIsolation, lockDown, testing, testingAS
 
-govActions = [15, 45, 1.3, 1.7, 1.3, False, 0.5, 0.05]
+
+runGovActions = False
+govActions = [10, 60, 1.3, 2.0, 1.2, False, True, 0.8, 0.3]
 
 for i in range(simulationsCount):
-	simulationCName = simulationName + str(i)
-	s = sim(simulationsPopulation, simulationsPeriod, simulationCName, govActions, True)
+	simulationCName = simulationName
+	if simulationsCount > 1:
+		simulationCName = simulationName + "_" + str(i)
+	s = sim(simulationsPopulation, simulationsPeriod, simulationCName, govActions, runGovActions)
 	vz.populationVisualization(simulationCName)
 	vz.simulationVisualization(simulationCName)

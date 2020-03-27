@@ -10,9 +10,9 @@ class Visualization():
 
 	def getFileNames(simulationName):
 		global populationFile
-		populationFile = "SimulationData/" + simulationName + "_population"
+		populationFile = "SimulationData/Population/" + simulationName + "_population"
 		global simulationFile
-		simulationFile = "SimulationData/" + simulationName
+		simulationFile = "SimulationData/Simulations/" + simulationName
 	
 	def loadFile(fileName):
 		dataFrame = pd.read_csv(fileName)
@@ -20,7 +20,7 @@ class Visualization():
 	
 	def simulationVisualization(simulationName):
 		Visualization.getFileNames(simulationName)
-		simulationData = Visualization.loadPopulationFile(simulationFile + ".csv")
+		simulationData = Visualization.loadFile(simulationFile + ".csv")
 				
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
 		figure.suptitle("Results for " + simulationName, fontsize=13)
@@ -55,9 +55,9 @@ class Visualization():
 		infectedratio.set_ylabel("")
 		infectedratio.set_title("Infected population %", fontsize=10)
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-		plt.savefig("SimulationPlots/" + simulationName + ".png")
+		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png")
 	
-	def populationVisualization(): #simulationName
+	def populationVisualization(simulationName):
 		Visualization.getFileNames(simulationName)
 		populationData = Visualization.loadFile(populationFile + ".csv")
 				
@@ -88,4 +88,4 @@ class Visualization():
 		deathRisk.set_ylabel("")
 		deathRisk.set_title("Death risk factor", fontsize=10)
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-		plt.savefig("SimulationPlots/" + simulationName + "_population.png")
+		plt.savefig("SimulationPlots/Population/" + simulationName + "_population.png")

@@ -18,6 +18,7 @@ class Human():
 		self.carefulFactor = 1.0
 		self.socialDistanceFactor = 1.0
 		self.deathRiskFactor = 1.0
+		self.isIsolated = False
 	
 		#Variables to managing the disease
 		self.isInfected = False

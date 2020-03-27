@@ -1,6 +1,6 @@
 "Store values to simulate goverment countermeasures"
-startDay = 0
-endDay = 0
+startCaseCount = 0
+actionsPeriod = 0
 baseInfoFactor = 1.0
 baseIsolationFactor = 1.0
 baseSocialDistanceFactor = 1.0
@@ -11,6 +11,7 @@ currentIsolationFactor = 1.0
 currentSocialDistanceFactor = 1.0
 testingResponseFactor = 0.5
 testingResponseASFactor = 0.05
+activeIsolation = False #Determine if the government strictly isolate confirmed cases
 lockDown = False
 colapseStart = 0.001 #Start age to calculate death risk factor function
 colapseEnd = 0.2 #End age to calculate death risk factor function
@@ -56,19 +57,19 @@ class GovermentActions():
 		polynomialColapseC = colapseStart * colapseStart * \
 						polynomialColapseA + colapseFactorStart
 	
-	def setStartDay(day):
-		global startDay
-		startDay = day
+	def setStartCaseCount(day):
+		global startCaseCount
+		startCaseCount = day
 	
-	def getStartDay():
-		return startDay
+	def getStartCaseCount():
+		return startCaseCount
 	
-	def setEndDay(day):
-		global endDay
-		endDay = day
+	def setActionsPeriod(day):
+		global actionsPeriod
+		actionsPeriod = day
 	
-	def getEndDay():
-		return endDay
+	def getActionsPeriod():
+		return actionsPeriod
 	
 	def setInfoFactor(factor):
 		global currentInfoFactor
@@ -98,6 +99,13 @@ class GovermentActions():
 	def getLockDown():
 		return lockDown
 	
+	def setActiveIsolation(status):
+		global activeIsolation
+		activeIsolation = status
+	
+	def getActiveIsolation():
+		return activeIsolation
+	
 	def setTestingResponseFactor(factor):
 		global testingResponseFactor
 		testingResponseFactor = factor
@@ -121,6 +129,8 @@ class GovermentActions():
 		currentSocialDistanceFactor = baseSocialDistanceFactor
 		global lockDown
 		lockDown = False
+		global activeIsolation
+		activeIsolation = False
 		global testingResponseFactor
 		testingResponseFactor = baseTestingFactor
 		global testingResponseASFactor

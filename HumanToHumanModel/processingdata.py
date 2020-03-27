@@ -45,4 +45,4 @@ class ProcessingData():
 						"Urban area"])
 			populationData = pd.concat([populationData, newRow])
 		populationData.sort_values(by=["Number"], inplace=True)
-		populationData.to_csv("SimulationData/" + simulationName + "_population.csv", index=False)
+		populationData.to_csv("SimulationData/Population/" + simulationName + "_population.csv", index=False)
