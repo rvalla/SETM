@@ -14,11 +14,10 @@ period = 0
 areaAHumans = []
 areaBHumans = []
 
-#Deciding starting point
-casesCeroCount = 1
-
 #Saving government actions start day
 govActionsStartDay = 0
+govActionsEndDay = 0
+govActionsActive = False
 
 #Simulation statistics
 totalInfected = 0
@@ -52,7 +51,7 @@ auxData = []
 
 class Simulation():
 	"Structuring one epidemic simulation"
-	def __init__(self, populationcount, periodindays, simulationName, govActionsList, govActions):
+	def __init__(self, populationcount, periodindays, casesCero, simulationName, govActionsList, govActions):
 	
 		global population
 		population = populationcount
@@ -64,7 +63,11 @@ class Simulation():
 		gov.setStartCaseCount(govActionsList[0])
 		gov.setActionsPeriod(govActionsList[1])
 		
-		Simulation.createHumans(population, simulationName)
+		Simulation.createHumans(population, casesCero, simulationName)
+
+		gov.saveSimulationConfig(simulationName)
+		vr.saveSimulationConfig(simulationName)
+		rd.saveSimulationConfig(simulationName)
 
 		for d in range(period):
 			print("Simulating day " + str(d) + "...		", end="\r")
@@ -76,6 +79,7 @@ class Simulation():
 				Simulation.humanExchange(areaAHumans, areaBHumans)
 			
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
+		Simulation.saveSimulationConfig(simulationName, casesCero, govActionsStartDay, govActions)
 			
 		print("Simulation Complete!				", end="\n")
 		print("Infected: " + str(totalInfected) + ", Recovered: " + str(totalRecovered) + ", Deaths: " +
@@ -191,10 +195,10 @@ class Simulation():
 		r = rd.aRandom()
 		tested = False
 		if notTestedHuman.isSymptomatic == True:
-			if r < gov.getTestingResponseFactor():
+			if r < gov.getTestingResponseThreshold():
 				tested = True
 		elif notTestedHuman.isSymptomatic == False:
-			if r < gov.getTestingResponseASFactor():
+			if r < gov.getTestingResponseASThreshold():
 				tested = True
 		if notTestedHuman.isInTreatment == True: #Probability of being tested in treatment is 1
 			tested = True
@@ -326,21 +330,27 @@ class Simulation():
 		
 	def checkGovermentActions(actualDay, govActionsList):
 		if totalTested >= gov.getStartCaseCount():
-			global govActionsStartDay
-			govActionsStartDay = actualDay
-			gov.setInfoFactor(govActionsList[2])
-			gov.setIsolationFactor(govActionsList[3])
-			gov.setSocialDistanceFactor(govActionsList[4])
-			gov.setActiveIsolation(govActionsList[5])
-			gov.setLockDown(govActionsList[6])
-			gov.setTestingResponseFactor(govActionsList[7])
-			gov.setTestingResponseASFactor(govActionsList[8])
+			global govActionsActive
+			if govActionsActive == False:
+				govActionsActive = True
+				global govActionsStartDay
+				if govActionsStartDay == 0:
+					govActionsStartDay = actualDay
+				gov.setInfoFactor(govActionsList[2])
+				gov.setIsolationFactor(govActionsList[3])
+				gov.setSocialDistanceFactor(govActionsList[4])
+				gov.setActiveIsolation(govActionsList[5])
+				gov.setLockDown(govActionsList[6])
+				gov.setTestingResponseThreshold(govActionsList[7])
+				gov.setTestingResponseASThreshold(govActionsList[8])
 		if actualDay == govActionsStartDay + gov.getActionsPeriod():
 			gov.resetCountermeasures()
+			global govActionsEndDay
+			govActionsEndDay = actualDay
 	
 	######################################################################################################
 	#Creating humans and simulation environment
-	def createHumans(population, simulationName):
+	def createHumans(population, casesCero, simulationName):
 		
 		#Humans initialization
 		humans = []
@@ -377,8 +387,8 @@ class Simulation():
 		
 		Simulation.assignAreas(humans)
 		
-		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCeroCount)
-		for i in range(casesCeroCount):
+		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCero)
+		for i in range(casesCero):
 			Simulation.setInfection(areaAHumans[auxRandoms[i]], "A")		
 		dt.savePopulationData(areaAHumans, areaBHumans, simulationName)
 	
@@ -463,6 +473,18 @@ class Simulation():
 									"Tested in B", "In treatment in B", "Deaths in B", "Recovered in B",
 									"Infected population %", "Death rate"])
 		evolutionData = pd.concat([evolutionData, auxRow])
+
+	def saveSimulationConfig(simulationName, casesCero, govActionsStartDay, govActions):
+		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
+		startConfig.write("----Simulation start" + "\n")
+		if casesCero < 2:
+			startConfig.write(str(casesCero) +  " infected human was injected in urban area A." + "\n")
+		else:
+			startConfig.write(str(casesCero) +  " infected humans were injected in urban area A." + "\n")
+		startConfig.write("" + "\n")
+		if govActions == True:
+			startConfig.write("Government actions started in day " + str(govActionsStartDay) + 
+							" and finished in day " + str(govActionsEndDay) + "\n")
 
 	#Simple methods to increase or decrease global variables
 	def increaseV(vName):

@@ -89,3 +89,23 @@ class Randomization():
 		c = random.triangular(exchange_start, exchange_end, exchange_mode)
 		c = c / govIsolationFactor
 		return (int(c))
+	
+	def saveSimulationConfig(simulationName):
+		rdConfig = open("SimulationData/" + simulationName + ".txt", "a")
+		rdConfig.write("----Human general randomization" + "\n")
+		rdConfig.write("Triangular ages distribution references: " + str(population_age_start) + ", " + 
+						str(population_age_end) + ", " + str(population_age_mode) + "\n")
+		rdConfig.write("Triangular family size distribution references: " + str(family_size_start) + ", " + 
+						str(family_size_end) + ", " + str(family_size_mode) + "\n")
+		rdConfig.write("Triangular careful/socialDistance factor distribution references: " + str(factor_start) + ", " + 
+						str(factor_end) + ", " + str(factor_mode) + "\n")
+		rdConfig.write("Triangular incubation/illness periods distribution references: " + str(illness_start) + ", " + 
+						str(illness_end) + ", " + str(illness_mode) + "\n")
+		rdConfig.write("" + "\n")
+		rdConfig.write("----Human movement randomization" + "\n")
+		rdConfig.write("Triangular contacts count distribution references: " + str(contacts_start) + ", " +
+						str(contacts_end) + ", " + str(contacts_mode) + "\n")
+		rdConfig.write("Triangular exchange humans distribution references: " + str(exchange_start) + ", " + 
+						str(exchange_end) + ", " + str(exchange_mode) + "\n")
+		rdConfig.write("" + "\n")
+		rdConfig.close()

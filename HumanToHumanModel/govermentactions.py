@@ -4,13 +4,13 @@ actionsPeriod = 0
 baseInfoFactor = 1.0
 baseIsolationFactor = 1.0
 baseSocialDistanceFactor = 1.0
-baseTestingFactor = 0.5
-baseTestingASFactor = 0.05
+baseTestingThreshold = 0.5
+baseTestingASThreshold = 0.05
 currentInfoFactor = 1.0
 currentIsolationFactor = 1.0
 currentSocialDistanceFactor = 1.0
-testingResponseFactor = 0.5
-testingResponseASFactor = 0.05
+testingResponseThreshold = 0.5
+testingResponseASThreshold = 0.05
 activeIsolation = False #Determine if the government strictly isolate confirmed cases
 lockDown = False
 colapseStart = 0.001 #Start age to calculate death risk factor function
@@ -106,20 +106,39 @@ class GovermentActions():
 	def getActiveIsolation():
 		return activeIsolation
 	
-	def setTestingResponseFactor(factor):
-		global testingResponseFactor
-		testingResponseFactor = factor
+	def setTestingResponseThreshold(threshold):
+		global testingResponseThreshold
+		testingResponseThreshold = threshold
 	
-	def getTestingResponseFactor():
-		return testingResponseFactor
+	def getTestingResponseThreshold():
+		return testingResponseThreshold
 		
-	def setTestingResponseASFactor(factor):
-		global testingResponseASFactor
-		testingResponseASFactor = factor
+	def setTestingResponseASThreshold(threshold):
+		global testingResponseASThreshold
+		testingResponseASThreshold = threshold
 	
-	def getTestingResponseASFactor():
-		return testingResponseASFactor
-			
+	def getTestingResponseASThreshold():
+		return testingResponseASThreshold
+	
+	#Method to save inicial data to text file
+	def saveSimulationConfig(simulationName):
+		govConfig = open("SimulationData/" + simulationName + ".txt", "a")
+		govConfig.write("----Goverment base state" + "\n")
+		govConfig.write("Base info factor: " + str(baseInfoFactor) + "\n")
+		govConfig.write("Base isolation factor: " + str(baseIsolationFactor) + "\n")
+		govConfig.write("Base social distance factor: " + str(baseSocialDistanceFactor) + "\n")
+		govConfig.write("Base testing threshold: " + str(baseTestingThreshold) + "\n")
+		govConfig.write("Base testing asymptomatic threshold: " + str(baseTestingASThreshold) + "\n")
+		govConfig.write("Active isolation: " + str(activeIsolation) + "\n")
+		govConfig.write("Lock down: " + str(lockDown) + "\n")
+		govConfig.write("Health system colapse start: " + str(colapseStart) + "\n")
+		govConfig.write("Health system colapse end: " + str(colapseEnd) + "\n")
+		govConfig.write("Health system colapse factor start: " + str(colapseFactorStart) + "\n")
+		govConfig.write("Health system colapse factor end: " + str(colapseFactorEnd) + "\n")
+		govConfig.write("" + "\n")
+		govConfig.close()
+		
+	#Method to reset government countermeasures
 	def resetCountermeasures():
 		global currentInfoFactor
 		currentInfoFactor = baseInfoFactor
@@ -131,7 +150,7 @@ class GovermentActions():
 		lockDown = False
 		global activeIsolation
 		activeIsolation = False
-		global testingResponseFactor
-		testingResponseFactor = baseTestingFactor
-		global testingResponseASFactor
-		testingResponseASFactor = baseTestingASFactor
+		global testingResponseThreshold
+		testingResponseThreshold = baseTestingThreshold
+		global testingResponseASThreshold
+		testingResponseASThreshold = baseTestingASThreshold

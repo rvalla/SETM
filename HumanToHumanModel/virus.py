@@ -1,7 +1,7 @@
-baseDeathRate = 0.4 #Base death rate for patients who needed treatment
 baseInfectionThreshold = 0.2 #How contagious the virus is
 baseSymptomsThreshold = 0.5 #Probability of having symptoms
 baseTreatmentThreshold = 0.2 #Probability of needing treatment
+baseDeathRate = 0.4 #Base death rate for patients who needed treatment
 deathRiskSymptomsWeight = 0.5 #The probability of been symptomatic is related to death risk
 deathRiskTreatmentWeight = 0.8 #The probability of need treatment is related to death risk
 riskFunctionStart = 30 #Start age to calculate death risk factor function
@@ -47,7 +47,24 @@ class Virus():
 	
 	def getDeathThreshold():
 		return baseDeathRate
-	
+		
+	#Method to save virus inicial configuration
+	def saveSimulationConfig(simulationName):
+		virConfig = open("SimulationData/" + simulationName + ".txt", "a")
+		virConfig.write("----Virus variables" + "\n")
+		virConfig.write("Base infection threshold: " + str(baseInfectionThreshold) + "\n")
+		virConfig.write("Base symptoms threshold: " + str(baseSymptomsThreshold) + "\n")
+		virConfig.write("Base treatment threshold: " + str(baseTreatmentThreshold) + "\n")
+		virConfig.write("Death rate for patients in treatment: " + str(baseDeathRate) + "\n")
+		virConfig.write("Weight of death risk in symptoms: " + str(deathRiskSymptomsWeight) + "\n")
+		virConfig.write("Weight of death risk in treatment: " + str(deathRiskTreatmentWeight) + "\n")
+		virConfig.write("Death risk function start age: " + str(riskFunctionStart) + "\n")
+		virConfig.write("Death risk function end age: " + str(riskFunctionEnd) + "\n")
+		virConfig.write("Death risk factor start: " + str(deathRiskatStart) + "\n")
+		virConfig.write("Death risk factor end: " + str(deathRiskatEnd) + "\n")
+		virConfig.write("" + "\n")
+		virConfig.close()
+
 	#Starting variables to store functions coefficients
 	def startRiskVariables():
 		global linearRiskP
