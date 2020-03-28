@@ -1,12 +1,12 @@
-#Simple epidemic transmission models
-
 This software is open-sourced and is licensed under __GNU GPL v3__. You can use and modify it freely.
 
 I am curious and I would like to know if you find errors in the code or just
 have questions about its algorithms. Perhaps you make wonderful adaptations.
 Contact me at [rodrigovalla[at]yahoo.com.ar](mailto:rodrigovalla@yahoo.com.ar).
 I am on telegram too ([@rvalla](https://t.me/rvalla))
-                   
+
+-------
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
