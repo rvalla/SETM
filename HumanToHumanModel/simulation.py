@@ -65,9 +65,11 @@ class Simulation():
 		
 		Simulation.createHumans(population, casesCero, simulationName)
 
+		print("Saving starting point data...", end="\r")
 		gov.saveSimulationConfig(simulationName)
 		vr.saveSimulationConfig(simulationName)
 		rd.saveSimulationConfig(simulationName)
+		print("Starting point data saved!           ", end="\n")
 
 		for d in range(period):
 			print("Simulating day " + str(d) + "...		", end="\r")
@@ -387,9 +389,11 @@ class Simulation():
 		
 		Simulation.assignAreas(humans)
 		
+		print("Injecting infected human/s in urban area A...", end="\r")
 		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCero)
 		for i in range(casesCero):
 			Simulation.setInfection(areaAHumans[auxRandoms[i]], "A")		
+		print("Infected human/s injected!                        ", end="\n")
 		dt.savePopulationData(areaAHumans, areaBHumans, simulationName)
 	
 	#Defining families for each human

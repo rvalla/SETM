@@ -19,6 +19,7 @@ class ProcessingData():
 				str(human.contagiousFactor))
 	
 	def savePopulationData(areaAHumans, areaBHumans, simulationName):
+		print("Saving population data...", end="\r")
 		populationData = pd.DataFrame([[areaAHumans[0].humanNumber, areaAHumans[0].age, str(areaAHumans[0].sex),
 							areaAHumans[0].familyNumber, areaAHumans[0].carefulFactor,
 							areaAHumans[0].socialDistanceFactor, areaAHumans[0].deathRiskFactor,
@@ -46,3 +47,4 @@ class ProcessingData():
 			populationData = pd.concat([populationData, newRow])
 		populationData.sort_values(by=["Number"], inplace=True)
 		populationData.to_csv("SimulationData/Population/" + simulationName + "_population.csv", index=False)
+		print("Population data saved to SimulationData/Population/" + simulationName + "_population.csv", end="\n")

@@ -11,7 +11,7 @@ print("#################################")
 simulationsPeriod = 120
 simulationsPopulation = 2000
 simulationsCount = 1
-simulationName = "28032020_2K_120d_02_SDis28d"
+simulationName = "28032020_2K_120d_03_SDisIso"
 
 #Government countermeasures
 #Passing the values for government actions in order:
@@ -20,7 +20,7 @@ simulationName = "28032020_2K_120d_02_SDis28d"
 
 casesCeroCount = 1
 runGovActions = True
-govActions = [10, 28, 1.3, 1.5, 2.0, False, False, 0.5, 0.05]
+govActions = [10, 56, 1.3, 2.0, 2.5, False, False, 0.5, 0.05]
 
 startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 startConfig.write("#################################" + "\n")
