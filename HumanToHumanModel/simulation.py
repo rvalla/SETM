@@ -39,6 +39,12 @@ BRecovered = 0
 infectedPopulationRatio = 0.0
 actualDeathRate = 0.0
 
+#Save simulation start time...
+simulationStartTime = 0
+
+#Saving first simulation name...
+simulationName0 = ""
+
 #To save de data during simulation
 evolutionData = pd.DataFrame(columns=["Day", "Total infected", "Total tested", "Total deaths", "Total recovered",
 									"Infected", "In treatment",
@@ -47,29 +53,37 @@ evolutionData = pd.DataFrame(columns=["Day", "Total infected", "Total tested", "
 									"Infected population %", "Death rate"])
 populationData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Family number", "Careful factor", 
 									"Social distance", "Death risk"])
-auxData = []
 
 class Simulation():
 	"Structuring one epidemic simulation"
-	def __init__(self, populationcount, periodindays, casesCero, simulationName, govActionsList, govActions):
-	
-		global population
-		population = populationcount
-		global period
-		period = periodindays
+	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, govActions):
 		
-		vr.startRiskVariables()
-		gov.startColapseVariables()
-		gov.setStartCaseCount(govActionsList[0])
-		gov.setActionsPeriod(govActionsList[1])
+		#print(evolutionData.head())
+		
+		if simNumber > 1:
+			Simulation.deleteSimulation()
+		
+		global simulationStartTime
+		simulationStartTime = tm.time()
+		
+		if simNumber == 1:
+			global population
+			population = populationcount
+			global period
+			period = periodindays
+			global simulationName0
+			simulationName0 = simulationName
+			vr.startRiskVariables()
+			gov.startColapseVariables()
+			gov.setStartCaseCount(govActionsList[0])
+			gov.setActionsPeriod(govActionsList[1])
+			print("Saving starting point data...", end="\r")
+			gov.saveSimulationConfig(simulationName)
+			vr.saveSimulationConfig(simulationName)
+			rd.saveSimulationConfig(simulationName)
+			print("Starting point data saved!           ", end="\n")
 		
 		Simulation.createHumans(population, casesCero, simulationName)
-
-		print("Saving starting point data...", end="\r")
-		gov.saveSimulationConfig(simulationName)
-		vr.saveSimulationConfig(simulationName)
-		rd.saveSimulationConfig(simulationName)
-		print("Starting point data saved!           ", end="\n")
 
 		for d in range(period):
 			print("Simulating day " + str(d) + "...		", end="\r")
@@ -79,13 +93,19 @@ class Simulation():
 				Simulation.checkGovermentActions(d, govActionsList)
 			if d < period:
 				Simulation.humanExchange(areaAHumans, areaBHumans)
+				
+		#print(evolutionData.head())
+	#	evolutionData.drop(['Day'][:])
+	#	print(evolutionData.head())
 			
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
-		Simulation.saveSimulationConfig(simulationName, casesCero, govActionsStartDay, govActions)
+		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsStartDay, govActions)
 			
 		print("Simulation Complete!				", end="\n")
 		print("Infected: " + str(totalInfected) + ", Recovered: " + str(totalRecovered) + ", Deaths: " +
 				str(totalDeaths), end="\n")
+		print("Time needed for this simulation: " +
+				Simulation.getSimulationTime(simulationStartTime, tm.time()), end="\n")
 		
 	#####################################################################################################
 	#Simulating a day...
@@ -470,7 +490,7 @@ class Simulation():
 		auxRow = pd.DataFrame([[day, totalInfected, totalTested, totalDeaths, totalRecovered, actualInfected,
 								actualInTreatment, actualAInfected,	ATested, actualAInTreatment,
 								ADeaths, ARecovered, actualBInfected, BTested, actualBInTreatment,
-								BDeaths, BRecovered, round(infectedPopulationRatio, 2), round(actualDeathRate, 2)]],
+								BDeaths, BRecovered, round(infectedPopulationRatio, 5), round(actualDeathRate, 5)]],
 								columns=["Day", "Total infected", "Total tested", "Total deaths", "Total recovered",
 									"Infected", "In treatment", "Infected in A", "Tested in A",
 									"In treatment in A", "Deaths in A", "Recovered in A","Infected in B",
@@ -478,17 +498,83 @@ class Simulation():
 									"Infected population %", "Death rate"])
 		evolutionData = pd.concat([evolutionData, auxRow])
 
-	def saveSimulationConfig(simulationName, casesCero, govActionsStartDay, govActions):
+	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsStartDay, govActions):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
-		startConfig.write("----Simulation start" + "\n")
-		if casesCero < 2:
-			startConfig.write(str(casesCero) +  " infected human was injected in urban area A." + "\n")
-		else:
-			startConfig.write(str(casesCero) +  " infected humans were injected in urban area A." + "\n")
-		startConfig.write("" + "\n")
+		if sinNumber == 1:
+			startConfig.write("----Simulation start" + "\n")
+			if casesCero < 2:
+				startConfig.write(str(casesCero) +  " infected human was injected in urban area A." + "\n")
+			else:
+				startConfig.write(str(casesCero) +  " infected humans were injected in urban area A." + "\n")
+			startConfig.write("" + "\n")
 		if govActions == True:
-			startConfig.write("Government actions started in day " + str(govActionsStartDay) + 
-							" and finished in day " + str(govActionsEndDay) + "\n")
+			startConfig.write(str(sinNumber) + ". Government actions started in day " + str(govActionsStartDay) +
+						" and finished in day " + str(govActionsEndDay) + "\n")
+
+	#Deleting data and humans to run a new simulation
+	def deleteSimulation():
+		areaAHumans.clear()
+		areaBHumans.clear()
+		Simulation.restartV()
+		global evolutionData
+		evolutionData.drop(evolutionData.index, inplace=True)
+	
+	#Calculating time needed for simulation to finish...
+	def getSimulationTime(startTime, endTime):
+		time = endTime - startTime
+		formatedTime = Simulation.formatTime(time)
+		return formatedTime
+	
+	def formatTime(time):
+		ms = ""
+		minutes = time // 60
+		seconds = time - minutes * 60
+		seconds = round(seconds, 2)
+		ms = "{:02d}".format(int(minutes))
+		ms += ":"
+		ms += "{:05.2f}".format(seconds)
+		return ms
+	
+	#Restarting variables in case another simulation is needed...
+	def restartV():
+		global totalInfected
+		totalInfected = 0
+		global totalTested
+		totalTested = 0
+		global totalDeaths
+		totalDeaths = 0
+		global totalRecovered
+		totalRecovered = 0
+		global actualInfected
+		actualInfected = 0
+		global actualInTreatment
+		actualInTreatment = 0
+		global actualAInfected
+		actualAInfected = 0
+		global ATested
+		ATested = 0
+		global actualAInTreatment
+		actualAInTreatment = 0
+		global ADeaths
+		ADeaths = 0
+		global ARecovered
+		ARecovered = 0
+		global actualBInfected
+		actualBInfected = 0
+		global BTested
+		BTested = 0
+		global actualBInTreatment
+		actualBInTreatment = 0
+		global BDeaths
+		BDeaths = 0
+		global BRecovered
+		BRecovered = 0
+		global govActionsStartDay
+		govActionsStartDay = 0
+		global govActionsEndDay
+		govActionsEndDay = 0
+		global govActionsActive
+		govActionsActive = False
 
 	#Simple methods to increase or decrease global variables
 	def increaseV(vName):

@@ -17,6 +17,33 @@ class ProcessingData():
 				str(human.willBeSymptomatic))
 		print("-- Is symptomatic: " + str(human.isSymptomatic) + ", Contagious factor: " +
 				str(human.contagiousFactor))
+				
+	def saveConfigStart(population, period, simulationName, govBoolean, govActions):
+		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
+		startConfig.write("#################################" + "\n")
+		startConfig.write("SIMPLE EPIDEMIC TRANSMISION MODEL" + "\n")
+		startConfig.write("Human to human disease simulation" + "\n")
+		startConfig.write("---------------------------------" + "\n")
+		startConfig.write("---https://github/rvalla/SETM----" + "\n")
+		startConfig.write("#################################" + "\n")
+		startConfig.write("" + "\n")
+		startConfig.write(simulationName + "\n")
+		startConfig.write("Population: " + str(population) + "\n")
+		startConfig.write("Period in days: " + str(period) + "\n")
+		startConfig.write("" + "\n")
+		if govBoolean == True:
+			startConfig.write("----Goverment actions" + "\n")
+			startConfig.write("startCaseCount: " + str(govActions[0]) + "\n")
+			startConfig.write("actionsPeriod: " + str(govActions[1]) + "\n")
+			startConfig.write("infoFactor: " + str(govActions[2]) + "\n")
+			startConfig.write("isolationFactor: " + str(govActions[3]) + "\n")
+			startConfig.write("socialDistanceFactor: " + str(govActions[4]) + "\n")
+			startConfig.write("activeIsolation: " + str(govActions[5]) + "\n")
+			startConfig.write("lockDown: " + str(govActions[6]) + "\n")
+			startConfig.write("testingResponseFactor: " + str(govActions[7]) + "\n")
+			startConfig.write("testingResponseASFactor: " + str(govActions[8]) + "\n")
+			startConfig.write("" + "\n")
+		startConfig.close()
 	
 	def savePopulationData(areaAHumans, areaBHumans, simulationName):
 		print("Saving population data...", end="\r")
