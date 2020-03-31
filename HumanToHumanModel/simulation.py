@@ -77,6 +77,9 @@ class Simulation():
 			gov.startColapseVariables()
 			gov.setStartCaseCount(govActionsList[0])
 			gov.setActionsPeriod(govActionsList[1])
+			gov.setActiveIsolation(govActionsList[5])
+			gov.setTestingResponseThreshold(govActionsList[7])
+			gov.setTestingResponseASThreshold(govActionsList[8])
 			print("Saving starting point data...", end="\r")
 			gov.saveSimulationConfig(simulationName)
 			vr.saveSimulationConfig(simulationName)
@@ -186,6 +189,8 @@ class Simulation():
 				if human.isSymptomatic == False:
 					human.isSymptomatic = True
 					human.contagiousFactor = 1.0
+					if human.autoIsolation == True: #Humans can isolate themselves
+						human.isIsolated = True
 					if human.willNeedTreatment == True:
 						if human.isInTreatment == False:
 							human.isInTreatment = True
@@ -359,12 +364,9 @@ class Simulation():
 				if govActionsStartDay == 0:
 					govActionsStartDay = actualDay
 				gov.setInfoFactor(govActionsList[2])
-				gov.setIsolationFactor(govActionsList[3])
-				gov.setSocialDistanceFactor(govActionsList[4])
-				gov.setActiveIsolation(govActionsList[5])
+				gov.setSocialDistanceFactor(govActionsList[3])
+				gov.setIsolationFactor(govActionsList[4])
 				gov.setLockDown(govActionsList[6])
-				gov.setTestingResponseThreshold(govActionsList[7])
-				gov.setTestingResponseASThreshold(govActionsList[8])
 		if actualDay == govActionsStartDay + gov.getActionsPeriod():
 			gov.resetCountermeasures()
 			global govActionsEndDay

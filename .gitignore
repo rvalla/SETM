@@ -2,3 +2,4 @@
 .DS_Store
 HumanToHumanModel/__pycache__/
 HumanToHumanModel/othervisualization.py
+HumanToHumanModel/Aux/

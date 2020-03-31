@@ -148,9 +148,3 @@ class GovermentActions():
 		currentSocialDistanceFactor = baseSocialDistanceFactor
 		global lockDown
 		lockDown = False
-		global activeIsolation
-		activeIsolation = False
-		global testingResponseThreshold
-		testingResponseThreshold = baseTestingThreshold
-		global testingResponseASThreshold
-		testingResponseASThreshold = baseTestingASThreshold

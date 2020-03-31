@@ -14,7 +14,7 @@ family_size_mode = 1.5
 #Limits for triangular distribution for factors
 factor_start = 0.8
 factor_end = 1.2
-factor_mode = 1
+factor_mode = 1.0
 
 #Limits for illness development
 illness_start = 1
