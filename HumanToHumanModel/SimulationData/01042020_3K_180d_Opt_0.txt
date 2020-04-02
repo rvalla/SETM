@@ -1,0 +1,64 @@
+#################################
+SIMPLE EPIDEMIC TRANSMISION MODEL
+Human to human disease simulation
+---------------------------------
+---https://github/rvalla/SETM----
+#################################
+
+01042020_3K_180d_Opt_0
+Population: 3000
+Period in days: 180
+Humans' auto isolation threshold: 0.5
+
+----Goverment actions
+startCaseCount: 100
+actionsPeriod: 42
+infoFactor: 1.1
+socialDistanceFactor: 1.5
+isolationFactor: 1.25
+activeIsolation: True
+lockDown: False
+testingResponseFactor: 0.5
+testingResponseASFactor: 0.05
+
+----Goverment base state
+Base info factor: 1.0
+Base isolation factor: 1.0
+Base social distance factor: 1.0
+Base testing threshold: 0.5
+Base testing asymptomatic threshold: 0.05
+Active isolation: True
+Lock down: False
+Health system colapse start: 0.001
+Health system colapse end: 0.1
+Health system colapse factor start: 1
+Health system colapse factor end: 5
+
+----Virus variables
+Base infection threshold: 0.1
+Base symptoms threshold: 0.5
+Base treatment threshold: 0.2
+Death rate for patients in treatment: 0.4
+Weight of death risk in symptoms: 0.4
+Weight of death risk in treatment: 0.6
+Death risk function start age: 30
+Death risk function end age: 100
+Death risk factor start: 1
+Death risk factor end: 4
+
+----Human general randomization
+Triangular ages distribution references: 0, 100, 26
+Triangular family size distribution references: 1, 5, 1.5
+Triangular careful/socialDistance factor distribution references: 0.8, 1.2, 1.0
+Triangular incubation/illness periods distribution references: 1, 12, 5
+
+----Human movement randomization
+Triangular contacts count distribution references: 2, 15, 5
+Triangular exchange humans distribution references: 4, 18, 8
+
+----Simulation start
+2 infected humans were injected in urban area A.
+
+1. Government actions never started.
+2. Government actions started in day 43 and finished in day 85
+3. Government actions started in day 60 and finished in day 102

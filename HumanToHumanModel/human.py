@@ -19,7 +19,7 @@ class Human():
 		self.socialDistanceFactor = 1.0
 		self.deathRiskFactor = 1.0
 		self.isIsolated = False
-		self.autoIsolation = True #If True, the human will isolate himself when the symptoms appear
+		self.autoIsolation = False #If True, the human will isolate himself when the symptoms appear
 	
 		#Variables to managing the disease
 		self.isInfected = False

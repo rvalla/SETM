@@ -14,7 +14,7 @@ testingResponseASThreshold = 0.05
 activeIsolation = False #Determine if the government strictly isolate confirmed cases
 lockDown = False
 colapseStart = 0.001 #Start age to calculate death risk factor function
-colapseEnd = 0.2 #End age to calculate death risk factor function
+colapseEnd = 0.1 #End age to calculate death risk factor function
 colapseFactorStart = 1 #Start factor to increase death risk with age
 colapseFactorEnd = 5 #End factor to increase death risk with age. For age = 100 > 4 * Risk
 linearColapseP = 0 #Variables to store functions coefficients

@@ -1,7 +1,5 @@
-from matplotlib.pyplot import figure
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.ticker import NullFormatter, FixedLocator
 
 populationFile = ""
 simulationFile = ""
@@ -18,7 +16,7 @@ class Visualization():
 		dataFrame = pd.read_csv(fileName)
 		return dataFrame
 	
-	def simulationVisualization(simulationName):
+	def simulationVisualization(simulationName, population):
 		Visualization.getFileNames(simulationName)
 		simulationData = Visualization.loadFile(simulationFile + ".csv")
 				
@@ -32,6 +30,7 @@ class Visualization():
 		total.legend(loc=2, prop={'size': 8})
 		total.set_title("Total cases", fontsize=10)
 		total.set_ylabel("")
+		total.set_ylim(0, population)
 		plt.subplot2grid((3, 2), (1, 0))
 		actual = simulationData["Infected"].plot(kind="line", linewidth=1.5, color="orange", label="Total")
 		actual = simulationData["Infected in A"].plot(kind="line", linewidth=1.5, color="indianred", label="Area A")
@@ -53,7 +52,7 @@ class Visualization():
 		plt.subplot2grid((3, 2), (2, 1))
 		infectedratio = simulationData["Infected population %"].plot(kind="line", linewidth=2.0, color="teal")
 		infectedratio.set_ylabel("")
-		infectedratio.set_title("Infected population %", fontsize=10)
+		infectedratio.set_title("Infected population ratio", fontsize=10)
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png")
 	

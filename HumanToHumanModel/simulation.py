@@ -56,7 +56,7 @@ populationData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Family num
 
 class Simulation():
 	"Structuring one epidemic simulation"
-	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, govActions):
+	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, govActions, autoIsolationThreshold):
 		
 		#print(evolutionData.head())
 		
@@ -86,7 +86,7 @@ class Simulation():
 			rd.saveSimulationConfig(simulationName)
 			print("Starting point data saved!           ", end="\n")
 		
-		Simulation.createHumans(population, casesCero, simulationName)
+		Simulation.createHumans(population, casesCero, simulationName, autoIsolationThreshold)
 
 		for d in range(period):
 			print("Simulating day " + str(d) + "...		", end="\r")
@@ -96,10 +96,6 @@ class Simulation():
 				Simulation.checkGovermentActions(d, govActionsList)
 			if d < period:
 				Simulation.humanExchange(areaAHumans, areaBHumans)
-				
-		#print(evolutionData.head())
-	#	evolutionData.drop(['Day'][:])
-	#	print(evolutionData.head())
 			
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
 		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsStartDay, govActions)
@@ -374,7 +370,7 @@ class Simulation():
 	
 	######################################################################################################
 	#Creating humans and simulation environment
-	def createHumans(population, casesCero, simulationName):
+	def createHumans(population, casesCero, simulationName, autoIsolationThreshold):
 		
 		#Humans initialization
 		humans = []
@@ -394,6 +390,7 @@ class Simulation():
 			humans[p].sex = rd.setSex()
 			humans[p].carefulFactor = rd.setCarefulFactor()
 			humans[p].socialDistanceFactor = rd.setSocialDistanceFactor()
+			humans[p].contagiousFactor = vr.getBaseASContagiousFactor()
 			
 			humans[p].deathRiskFactor = vr.deathRiskFactor(humans[p].age, "polynomial")
 			
@@ -404,7 +401,12 @@ class Simulation():
 				auxRandom = rd.aRandom()
 				if auxRandom < vr.getTreatmentThreshold() * humans[p].deathRiskFactor * vr.getDeathRiskTreatmentW():
 					humans[p].willNeedTreatment = True
-		
+			
+			#Defining if human will isolate himself in case of having symptoms
+			auxRandom = rd.aRandom()
+			if auxRandom <= autoIsolationThreshold:
+				humans[p].autoIsolation = True
+			
 		print("Creating humans complete!		", end="\n")
 		
 		Simulation.assignFamilies(humans)
@@ -510,7 +512,10 @@ class Simulation():
 				startConfig.write(str(casesCero) +  " infected humans were injected in urban area A." + "\n")
 			startConfig.write("" + "\n")
 		if govActions == True:
-			startConfig.write(str(sinNumber) + ". Government actions started in day " + str(govActionsStartDay) +
+			if govActionsStartDay == 0:
+				startConfig.write(str(sinNumber) + ". Government actions never started." + "\n")
+			else:
+				startConfig.write(str(sinNumber) + ". Government actions started in day " + str(govActionsStartDay) +
 						" and finished in day " + str(govActionsEndDay) + "\n")
 
 	#Deleting data and humans to run a new simulation
