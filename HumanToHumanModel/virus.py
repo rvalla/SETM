@@ -1,9 +1,9 @@
-baseInfectionThreshold = 0.1 #How contagious the virus is
+baseInfectionThreshold = 0.18 #How contagious the virus is
 baseASContagiousFactor = 0.15 #Contagious factor in absence of symptoms
 baseSymptomsThreshold = 0.5 #Probability of having symptoms
 baseTreatmentThreshold = 0.2 #Probability of needing treatment
 baseDeathRate = 0.4 #Base death rate for patients who needed treatment
-deathRiskSymptomsWeight = 0.4 #The probability of been symptomatic is related to death risk
+deathRiskSymptomsWeight = 0.7 #The probability of been symptomatic is related to death risk
 deathRiskTreatmentWeight = 0.6 #The probability of need treatment is related to death risk
 riskFunctionStart = 30 #Start age to calculate death risk factor function
 riskFunctionEnd = 100 #End age to calculate death risk factor function

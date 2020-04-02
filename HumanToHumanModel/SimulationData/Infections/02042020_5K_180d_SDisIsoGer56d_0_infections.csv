@@ -1,0 +1,5 @@
+Human number,Age,Sex,Death risk factor,Is dead?,Incubation period,Total illness period,Was tested?,Had symptoms?,Was treated?
+68,21,Male,1.0,False,6.0,13.0,False,False,False
+69,55,Male,1.3826530612244898,False,5.0,7.0,False,False,False
+706,84,Male,2.7853061224489792,False,7.0,10.0,True,True,True
+545,50,Female,1.2448979591836735,False,5.0,14.0,False,False,False

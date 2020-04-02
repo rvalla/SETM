@@ -6,7 +6,7 @@ This a model to simulate the effect from actions taken by the authorities in cas
 an epidemic outbreak. Is inspired in **COVID-19** pandemic, but you can adapt the variables to represent
 another contagious desease.</br>
 
-#### Humantohumanmodel.py
+#### humantohumanmodel.py
 You can run a certain number of simulations adapting the code of *humantohumanmodel.py* simply
 by specifying among others:
 * Population size
@@ -24,8 +24,8 @@ the population is created and simulation starts.</br>
 There are two different lists of *humans* to represent two cities in the simulated country. Each day,
 the infected humans make contact with their family members and an aleatory contact list. Some of them may
 be infected.</br>
-The evolution state of the simulation is saved to a *csv* file as well as the population data. General
-plots to display population data and simulation evolution will be saved automatically.
+The evolution state of the simulation is saved to a *csv* file as well as the population and infections
+data. General plots to display population data and simulation evolution will be saved automatically.
 
 #### human.py
 You could edit some human's characteristics directly on *human.py*, although its atributes will
@@ -37,6 +37,16 @@ the virus is, its base death rate, how many infected humans will have symptoms o
 and more.
 
 #### government.py
+The place where you can specify baseline variables related to government contingency measures.
 
+#### randomization.py
+The place where you can edit the probabilistic distribution of some of the atributes (population age
+distribution, incubation periods and illness periods distribution).
+
+#### processingdata.py
+Some code to process and save the data correctly.
+
+#### visualization.py
+Some code to plot results automatically.
 
 Contact [rodrigovalla[at]yahoo.com.ar](mailto:rodrigovalla@yahoo.com.ar)

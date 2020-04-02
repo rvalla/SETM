@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 populationFile = ""
 simulationFile = ""
+infectionsFile = ""
 
 class Visualization():
 
@@ -11,15 +12,15 @@ class Visualization():
 		populationFile = "SimulationData/Population/" + simulationName + "_population"
 		global simulationFile
 		simulationFile = "SimulationData/Simulations/" + simulationName
+		global infectionsFile
+		infectionsFile = "SimulationData/Infections/" + simulationName + "_infections"
 	
 	def loadFile(fileName):
 		dataFrame = pd.read_csv(fileName)
 		return dataFrame
 	
 	def simulationVisualization(simulationName, population):
-		Visualization.getFileNames(simulationName)
-		simulationData = Visualization.loadFile(simulationFile + ".csv")
-				
+		simulationData = Visualization.loadFile(simulationFile + ".csv")			
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
 		figure.suptitle("Results for " + simulationName, fontsize=13)
 		plt.subplot2grid((3, 2), (0, 0), colspan=2)
@@ -56,10 +57,39 @@ class Visualization():
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png")
 	
+	def infectionsVisualization(simulationName):
+		infectionsData = Visualization.loadFile(infectionsFile + ".csv")		
+		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
+		figure.suptitle("Infections in " + simulationName, fontsize=13)
+		plt.subplot2grid((3, 2), (0, 0))
+		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color="tab:blue")
+		incubation.set_title("Incubation periods distribution", fontsize=10)
+		incubation.set_ylabel("")
+		plt.subplot2grid((3, 2), (0, 1))
+		illness = infectionsData["Total illness period"].plot(kind="hist", bins=10, color="tab:blue")
+		illness.set_title("Total illness period distribution", fontsize=10)
+		illness.set_ylabel("")
+		plt.subplot2grid((3, 2), (1, 0))
+		tested = infectionsData["Was tested?"].value_counts().plot(kind="barh", color="mediumseagreen")
+		tested.set_ylabel("")
+		tested.set_title("Was a confirmed case?", fontsize=10)
+		plt.subplot2grid((3, 2), (1, 1))
+		deaths = infectionsData["Is dead?"].value_counts().plot(kind="barh", color="orangered")
+		deaths.set_ylabel("")
+		deaths.set_title("Has died?", fontsize=10)
+		plt.subplot2grid((3, 2), (2, 0))
+		symptoms = infectionsData["Had symptoms?"].value_counts().plot(kind="barh", color="goldenrod")
+		symptoms.set_ylabel("")
+		symptoms.set_title("Had symptoms?", fontsize=10)
+		plt.subplot2grid((3, 2), (2, 1))
+		treatment = infectionsData["Was treated?"].value_counts().plot(kind="barh", color="orangered")
+		treatment.set_ylabel("")
+		treatment.set_title("Was treated?", fontsize=10)
+		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+		plt.savefig("SimulationPlots/Infections/" + simulationName + "_infections.png")
+	
 	def populationVisualization(simulationName):
-		Visualization.getFileNames(simulationName)
-		populationData = Visualization.loadFile(populationFile + ".csv")
-				
+		populationData = Visualization.loadFile(populationFile + ".csv")		
 		figure = plt.figure(num=None, figsize=(8, 6), dpi=150)
 		figure.suptitle("Population summary: " + simulationName, fontsize=13)
 		plt.subplot2grid((4, 4), (0, 0), colspan=2, rowspan=5)

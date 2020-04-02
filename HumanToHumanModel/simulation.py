@@ -53,20 +53,22 @@ evolutionData = pd.DataFrame(columns=["Day", "Total infected", "Total tested", "
 									"Infected population %", "Death rate"])
 populationData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Family number", "Careful factor", 
 									"Social distance", "Death risk"])
+virusData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Death risk factor", "Is dead?",
+									"Incubation period", "Total illness period", "Was tested?",
+									"Had symptoms?", "Was treated?"])
 
 class Simulation():
 	"Structuring one epidemic simulation"
-	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, govActions, autoIsolationThreshold):
+	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, \
+					govActions, autoIsolationThreshold):
 		
-		#print(evolutionData.head())
-		
-		if simNumber > 1:
+		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()
 		
 		global simulationStartTime
-		simulationStartTime = tm.time()
+		simulationStartTime = tm.time() #To know how much time a simulation takes
 		
-		if simNumber == 1:
+		if simNumber == 1: #Some things will be the same in all iterations
 			global population
 			population = populationcount
 			global period
@@ -86,8 +88,10 @@ class Simulation():
 			rd.saveSimulationConfig(simulationName)
 			print("Starting point data saved!           ", end="\n")
 		
+		#Now we create the population that will suffer the outbreak.
 		Simulation.createHumans(population, casesCero, simulationName, autoIsolationThreshold)
 
+		#Simulating each day, one by one...
 		for d in range(period):
 			print("Simulating day " + str(d) + "...		", end="\r")
 			Simulation.simulateDay()
@@ -98,6 +102,7 @@ class Simulation():
 				Simulation.humanExchange(areaAHumans, areaBHumans)
 			
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
+		virusData.to_csv("SimulationData/Infections/" + simulationName + "_infections.csv", index=False)
 		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsStartDay, govActions)
 			
 		print("Simulation Complete!				", end="\n")
@@ -253,6 +258,7 @@ class Simulation():
 		index = 0
 		Simulation.increaseV("totalDeaths")
 		Simulation.decreaseV("actualInfected")
+		Simulation.saveInfection(human, True)
 		if area == "A":
 			index = Simulation.getHumanIndex(areaAHumans, humanNumber)
 			Simulation.cleanFamilyandContacts(areaAHumans, index, humanNumber)
@@ -294,6 +300,7 @@ class Simulation():
 		human.hasImmunity = True
 		Simulation.increaseV("totalRecovered")
 		Simulation.decreaseV("actualInfected")
+		Simulation.saveInfection(human, False)
 		if area == "A":
 			Simulation.increaseV("ARecovered")
 			Simulation.decreaseV("actualAInfected")
@@ -502,6 +509,16 @@ class Simulation():
 									"Infected population %", "Death rate"])
 		evolutionData = pd.concat([evolutionData, auxRow])
 
+	def saveInfection(human, isDead):
+		global virusData
+		auxRow = pd.DataFrame([[human.humanNumber, human.age, human.sex, human.deathRiskFactor, isDead,
+								human.incubationPeriod, human.illnessPeriod, human.wasTested,
+								human.willBeSymptomatic, human.willNeedTreatment]],
+								columns=["Human number", "Age", "Sex", "Death risk factor", "Is dead?",
+									"Incubation period", "Total illness period", "Was tested?",
+									"Had symptoms?", "Was treated?"])
+		virusData = pd.concat([virusData, auxRow])
+	
 	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsStartDay, govActions):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		if sinNumber == 1:
@@ -520,11 +537,17 @@ class Simulation():
 
 	#Deleting data and humans to run a new simulation
 	def deleteSimulation():
+		print("Deleting humans from previous population...", end="\r")
 		areaAHumans.clear()
 		areaBHumans.clear()
 		Simulation.restartV()
+		print("Humans from previous population deleted!        ", end="\n")
+		print("Erasing previous simulation data...", end="\r")
 		global evolutionData
 		evolutionData.drop(evolutionData.index, inplace=True)
+		global virusData
+		virusData.drop(virusData.index, inplace=True)
+		print("Previous simulation data erased!             ", end="\n")
 	
 	#Calculating time needed for simulation to finish...
 	def getSimulationTime(startTime, endTime):
