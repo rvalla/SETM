@@ -1,7 +1,8 @@
-baseInfectionThreshold = 0.18 #How contagious the virus is
-baseASContagiousFactor = 0.15 #Contagious factor in absence of symptoms
+baseInfectionThreshold = 0.2 #How contagious the virus is
+baseASContagiousFactor = 0.2 #Contagious factor in absence of symptoms
 baseSymptomsThreshold = 0.5 #Probability of having symptoms
 baseTreatmentThreshold = 0.2 #Probability of needing treatment
+contagiousShift = -1 #Days offset between mosto contagious face and symptoms.
 baseDeathRate = 0.4 #Base death rate for patients who needed treatment
 deathRiskSymptomsWeight = 0.7 #The probability of been symptomatic is related to death risk
 deathRiskTreatmentWeight = 0.6 #The probability of need treatment is related to death risk
@@ -51,6 +52,9 @@ class Virus():
 		
 	def getBaseASContagiousFactor():
 		return baseASContagiousFactor
+	
+	def getContagiousShift():
+		return contagiousShift
 		
 	#Method to save virus inicial configuration
 	def saveSimulationConfig(simulationName):
@@ -59,6 +63,7 @@ class Virus():
 		virConfig.write("Base infection threshold: " + str(baseInfectionThreshold) + "\n")
 		virConfig.write("Base symptoms threshold: " + str(baseSymptomsThreshold) + "\n")
 		virConfig.write("Base treatment threshold: " + str(baseTreatmentThreshold) + "\n")
+		virConfig.write("Contagious fase shift from incubation end: " + str(contagiousShift) + "\n")
 		virConfig.write("Death rate for patients in treatment: " + str(baseDeathRate) + "\n")
 		virConfig.write("Weight of death risk in symptoms: " + str(deathRiskSymptomsWeight) + "\n")
 		virConfig.write("Weight of death risk in treatment: " + str(deathRiskTreatmentWeight) + "\n")

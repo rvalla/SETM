@@ -157,7 +157,7 @@ class Simulation():
 			r = rd.aRandom()
 			c = rd.isCarefulAverage(infectedHuman, human) * gov.getInfoFactor()
 			s = rd.isDistancedAverage(infectedHuman, human) * gov.getSocialDistanceFactor()
-			infectionP = r * ((c + s) / 2)
+			infectionP = r * rd.getInfectionThresholdVar(c, s)
 			if infectionP < vr.getInfectionThreshold() *  infectedHuman.contagiousFactor:
 				Simulation.setInfection(human, area)
 
@@ -168,7 +168,7 @@ class Simulation():
 		human.incubationPeriod = illness
 		illness += rd.setIllnessDevelopment()
 		human.illnessPeriod = illness
-		human.evolutionState = 1
+		human.evolutionState = 0
 		Simulation.increaseV("totalInfected")
 		Simulation.increaseV("actualInfected")
 		if area == "A":
@@ -183,24 +183,22 @@ class Simulation():
 		#Simulating government tests
 		if human.wasTested == False:
 			Simulation.decideTest(human, area)
-		
+
 		#Illness evolution...		
 		if human.willBeSymptomatic == True:
-			if human.evolutionState >= human.incubationPeriod and human.evolutionState < human.illnessPeriod:
-				if human.isSymptomatic == False:
-					human.isSymptomatic = True
-					human.contagiousFactor = 1.0
-					if human.autoIsolation == True: #Humans can isolate themselves
+			if human.evolutionState == human.incubationPeriod: #and human.evolutionState < human.illnessPeriod:
+				human.isSymptomatic = True
+				if human.autoIsolation == True: #Humans can isolate themselves
 						human.isIsolated = True
-					if human.willNeedTreatment == True:
-						if human.isInTreatment == False:
-							human.isInTreatment = True
-							Simulation.increaseV("actualInTreatment")
-							if area == "A":
-								Simulation.increaseV("actualAInTreatment")
-							elif area == "B":
-								Simulation.increaseV("actualBInTreatment")
-			elif human.evolutionState >= human.illnessPeriod:
+				if human.willNeedTreatment == True:
+					#if human.isInTreatment == False:
+					human.isInTreatment = True
+					Simulation.increaseV("actualInTreatment")
+					if area == "A":
+						Simulation.increaseV("actualAInTreatment")
+					elif area == "B":
+						Simulation.increaseV("actualBInTreatment")
+			elif human.evolutionState == human.illnessPeriod:
 				if human.isSymptomatic == True:
 					if human.isInTreatment == True:
 						if Simulation.decideDeath(human) == True:
@@ -214,8 +212,10 @@ class Simulation():
 							Simulation.decreaseV("actualBInTreatment")
 					elif human.isInTreatment == False:
 						Simulation.setCure(human, area)
+			if human.evolutionState == human.incubationPeriod + vr.getContagiousShift():
+				human.contagiousFactor = 1.0 #Contagious factor can change before of after the symptoms appear 
 		elif human.willBeSymptomatic == False:
-			if human.evolutionState >= human.illnessPeriod:
+			if human.evolutionState == human.illnessPeriod:
 				Simulation.setCure(human, area)
 
 	#Deciding if human is tested
@@ -240,7 +240,7 @@ class Simulation():
 				Simulation.increaseV("BTested")
 				
 	def decideActiveIsolation(human):
-		if gov.getActiveIsolation == True:
+		if gov.getActiveIsolation() == True:
 			human.isIsolated = True
 	
 	#Deciding if a human will die

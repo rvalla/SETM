@@ -17,8 +17,8 @@ factor_end = 1.2
 factor_mode = 1.0
 
 #Limits for illness development
-illness_start = 1
-illness_end = 12
+illness_start = 2
+illness_end = 8
 illness_mode = 5
 
 #Limits for triangular distribution for contacts
@@ -30,6 +30,10 @@ contacts_mode = 3
 exchange_start = 4
 exchange_end = 18
 exchange_mode = 8
+
+#Adjusting relative weights for government infoFactor and socialDistanceFactor
+infoFactorW = 1
+socialDistanceW = 4
 
 class Randomization():
 	"Functions to work with the randomization of elements for simulations"
@@ -90,6 +94,11 @@ class Randomization():
 		c = c / govIsolationFactor
 		return (int(c))
 	
+	#Determining how much will change the random number before deciding infection...
+	def getInfectionThresholdVar(i, d):
+		t = (i *  infoFactorW + d * socialDistanceW) / (infoFactorW + socialDistanceW)
+		return t
+	
 	def saveSimulationConfig(simulationName):
 		rdConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		rdConfig.write("----Human general randomization" + "\n")
@@ -107,5 +116,7 @@ class Randomization():
 						str(contacts_end) + ", " + str(contacts_mode) + "\n")
 		rdConfig.write("Triangular exchange humans distribution references: " + str(exchange_start) + ", " + 
 						str(exchange_end) + ", " + str(exchange_mode) + "\n")
+		rdConfig.write("Relatives weights for government infoFactor and socialDistanceFactor: " + 
+						str(infoFactorW) + ", " + str(socialDistanceW) + "\n")
 		rdConfig.write("" + "\n")
 		rdConfig.close()

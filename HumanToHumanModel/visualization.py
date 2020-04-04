@@ -62,7 +62,7 @@ class Visualization():
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
 		figure.suptitle("Infections in " + simulationName, fontsize=13)
 		plt.subplot2grid((3, 2), (0, 0))
-		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color="tab:blue")
+		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=7, color="tab:blue")
 		incubation.set_title("Incubation periods distribution", fontsize=10)
 		incubation.set_ylabel("")
 		plt.subplot2grid((3, 2), (0, 1))
