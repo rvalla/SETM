@@ -9,14 +9,18 @@ import time as tm
 #General data
 population = 0
 period = 0
+psicosis = False
+psicosisCycles = []
 
 #Representing two separate urban areas
 areaAHumans = []
 areaBHumans = []
 
 #Saving government actions start day
-govActionsStartDay = 0
-govActionsEndDay = 0
+govActionsStartDay = -1
+govActionsEndDay = -1
+govActionsFailure = -1
+govActionsFailurePeriod = -1
 govActionsActive = False
 
 #Simulation statistics
@@ -26,6 +30,7 @@ totalDeaths = 0
 totalRecovered = 0
 actualInfected = 0
 actualInTreatment = 0
+actualTested = 0
 actualAInfected = 0
 ATested = 0
 actualAInTreatment = 0
@@ -37,6 +42,7 @@ actualBInTreatment = 0
 BDeaths = 0
 BRecovered = 0
 infectedPopulationRatio = 0.0
+knownInfectedRatio = 0.0
 actualDeathRate = 0.0
 
 #Save simulation start time...
@@ -60,7 +66,7 @@ virusData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Death risk fact
 class Simulation():
 	"Structuring one epidemic simulation"
 	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActionsList, \
-					govActions, autoIsolationThreshold):
+					govActions, autoIsolationThreshold, psicosisB, psicosisThreshold, psicosisFactor):
 		
 		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()
@@ -82,6 +88,8 @@ class Simulation():
 			gov.setActiveIsolation(govActionsList[5])
 			gov.setTestingResponseThreshold(govActionsList[7])
 			gov.setTestingResponseASThreshold(govActionsList[8])
+			global govActionsFailurePeriod
+			govActionsFailurePeriod = govActionsList[11]
 			print("Saving starting point data...", end="\r")
 			gov.saveSimulationConfig(simulationName)
 			vr.saveSimulationConfig(simulationName)
@@ -96,6 +104,8 @@ class Simulation():
 			print("Simulating day " + str(d) + "...		", end="\r")
 			Simulation.simulateDay()
 			Simulation.saveDay(d + 1)
+			if psicosisB == True:
+				Simulation.checkHumansPsicosis(d, psicosisThreshold, psicosisFactor)
 			if govActions == True:
 				Simulation.checkGovermentActions(d, govActionsList)
 			if d < period:
@@ -103,7 +113,8 @@ class Simulation():
 			
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
 		virusData.to_csv("SimulationData/Infections/" + simulationName + "_infections.csv", index=False)
-		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsStartDay, govActions)
+		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsStartDay, \
+			govActions, psicosisB, psicosisCycles)
 			
 		print("Simulation Complete!				", end="\n")
 		print("Infected: " + str(totalInfected) + ", Recovered: " + str(totalRecovered) + ", Deaths: " +
@@ -118,6 +129,7 @@ class Simulation():
 		Simulation.simulateAreaB()
 		Simulation.getDeathRate()
 		Simulation.getInfectedRatio()
+		Simulation.getKnownInfectedRatio()
 		
 	def simulateAreaA():
 		infectedList = Simulation.getInfectedList(areaAHumans)
@@ -213,7 +225,9 @@ class Simulation():
 					elif human.isInTreatment == False:
 						Simulation.setCure(human, area)
 			if human.evolutionState == human.incubationPeriod + vr.getContagiousShift():
-				human.contagiousFactor = 1.0 #Contagious factor can change before of after the symptoms appear 
+				human.contagiousFactor = 1.0 #Contagious factor can change before of after the symptoms appear
+			if human.evolutionState == human.illnessPeriod + vr.getContagiousShift():
+				human.contagiousFactor = vr.getBaseASContagiousFactor()
 		elif human.willBeSymptomatic == False:
 			if human.evolutionState == human.illnessPeriod:
 				Simulation.setCure(human, area)
@@ -234,6 +248,7 @@ class Simulation():
 			notTestedHuman.wasTested = True
 			Simulation.decideActiveIsolation(notTestedHuman)
 			Simulation.increaseV("totalTested")
+			Simulation.increaseV("actualTested")
 			if area == "A":
 				Simulation.increaseV("ATested")
 			elif area == "B":
@@ -259,6 +274,8 @@ class Simulation():
 		Simulation.increaseV("totalDeaths")
 		Simulation.decreaseV("actualInfected")
 		Simulation.saveInfection(human, True)
+		if human.wasTested == True:
+			Simulation.decreaseV("actualTested")
 		if area == "A":
 			index = Simulation.getHumanIndex(areaAHumans, humanNumber)
 			Simulation.cleanFamilyandContacts(areaAHumans, index, humanNumber)
@@ -301,6 +318,8 @@ class Simulation():
 		Simulation.increaseV("totalRecovered")
 		Simulation.decreaseV("actualInfected")
 		Simulation.saveInfection(human, False)
+		if human.wasTested == True:
+			Simulation.decreaseV("actualTested")
 		if area == "A":
 			Simulation.increaseV("ARecovered")
 			Simulation.decreaseV("actualAInfected")
@@ -364,17 +383,58 @@ class Simulation():
 			if govActionsActive == False:
 				govActionsActive = True
 				global govActionsStartDay
-				if govActionsStartDay == 0:
-					govActionsStartDay = actualDay
-				gov.setInfoFactor(govActionsList[2])
-				gov.setSocialDistanceFactor(govActionsList[3])
-				gov.setIsolationFactor(govActionsList[4])
-				gov.setLockDown(govActionsList[6])
-		if actualDay == govActionsStartDay + gov.getActionsPeriod():
-			gov.resetCountermeasures()
-			global govActionsEndDay
-			govActionsEndDay = actualDay
+				govActionsStartDay = actualDay
+				Simulation.startGovActions(govActionsList)
+			elif govActionsActive == True:
+				if govActionsList[9] == True: #Checking if there will be government failures
+					if actualDay == govActionsStartDay + govActionsList[10]:
+						gov.resetCountermeasures()
+						global govActionsFailure
+						govActionsFailure = actualDay
+					elif actualDay == govActionsStartDay + govActionsList[10] + govActionsList[11]:
+						Simulation.startGovActions(govActionsList)
+				if actualDay == govActionsStartDay + gov.getActionsPeriod():
+					gov.resetCountermeasures()
+					global govActionsEndDay
+					govActionsEndDay = actualDay
+			
+	def startGovActions(govActionsList):
+		gov.setInfoFactor(govActionsList[2])
+		gov.setSocialDistanceFactor(govActionsList[3])
+		gov.setIsolationFactor(govActionsList[4])
+		gov.setLockDown(govActionsList[6])
 	
+	def checkHumansPsicosis(d, psicosisThreshold, psicosisFactor):
+		global psicosis
+		if knownInfectedRatio > psicosisThreshold:
+			if psicosis == False:
+				Simulation.improveHumans(areaAHumans, areaBHumans, d, psicosisFactor)
+				psicosis = True
+		elif knownInfectedRatio <= psicosisThreshold:
+			if psicosis == True:
+				Simulation.resetHumansImprovement(areaAHumans, areaBHumans, d, psicosisFactor)
+				psicosis = False
+	
+	def improveHumans(areaAHumans, areaBHumans, d, psicosisFactor):
+		for h in range(len(areaAHumans)):
+			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor * psicosisFactor
+			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor * psicosisFactor
+		for h in range(len(areaBHumans)):
+			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor * psicosisFactor
+			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor * psicosisFactor
+		global psicosisCycles
+		psicosisCycles.append(d)
+		
+	def resetHumansImprovement(areaAHumans, areaBHumans, d, psicosisFactor):
+		for h in range(len(areaAHumans)):
+			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor / psicosisFactor
+			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor / psicosisFactor
+		for h in range(len(areaBHumans)):
+			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor / psicosisFactor
+			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor / psicosisFactor
+		global psicosisCycles
+		psicosisCycles.append(d)
+		
 	######################################################################################################
 	#Creating humans and simulation environment
 	def createHumans(population, casesCero, simulationName, autoIsolationThreshold):
@@ -491,6 +551,10 @@ class Simulation():
 	def getInfectedRatio():
 		global infectedPopulationRatio
 		infectedPopulationRatio = actualInfected / population
+
+	def getKnownInfectedRatio():
+		global knownInfectedRatio
+		knownInfectedRatio = actualTested / population
 		
 	def getDeathRate():
 		global actualDeathRate
@@ -519,7 +583,7 @@ class Simulation():
 									"Had symptoms?", "Was treated?"])
 		virusData = pd.concat([virusData, auxRow])
 	
-	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsStartDay, govActions):
+	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsStartDay, govActions, psicosisB, psicosisC):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		if sinNumber == 1:
 			startConfig.write("----Simulation start" + "\n")
@@ -529,11 +593,13 @@ class Simulation():
 				startConfig.write(str(casesCero) +  " infected humans were injected in urban area A." + "\n")
 			startConfig.write("" + "\n")
 		if govActions == True:
-			if govActionsStartDay == 0:
+			if govActionsStartDay == -1:
 				startConfig.write(str(sinNumber) + ". Government actions never started." + "\n")
 			else:
 				startConfig.write(str(sinNumber) + ". Government actions started in day " + str(govActionsStartDay) +
 						" and finished in day " + str(govActionsEndDay) + "\n")
+		if psicosisB == True:
+			startConfig.write(str(sinNumber) + ". Population psicosis cycles:" + str(psicosisC) + "\n")
 
 	#Deleting data and humans to run a new simulation
 	def deleteSimulation():
@@ -565,6 +631,25 @@ class Simulation():
 		ms += "{:05.2f}".format(seconds)
 		return ms
 	
+	def getGovActionsStartDay():
+		return govActionsStartDay
+	
+	def getGovActionsEndDay():
+		return govActionsEndDay
+		
+	def getGovActionsFailure():
+		return govActionsFailure
+	
+	def getGovActionsFailurePeriod():
+		return govActionsFailurePeriod
+	
+	def getPsicosisCycles():
+		global psicosisCycles
+		length = len(psicosisCycles)
+		if length % 2 != 0:
+			psicosisCycles.append(period)
+		return psicosisCycles
+	
 	#Restarting variables in case another simulation is needed...
 	def restartV():
 		global totalInfected
@@ -581,6 +666,8 @@ class Simulation():
 		actualInTreatment = 0
 		global actualAInfected
 		actualAInfected = 0
+		global actualTested
+		actualTested = 0
 		global ATested
 		ATested = 0
 		global actualAInTreatment
@@ -600,11 +687,15 @@ class Simulation():
 		global BRecovered
 		BRecovered = 0
 		global govActionsStartDay
-		govActionsStartDay = 0
+		govActionsStartDay = -1
 		global govActionsEndDay
-		govActionsEndDay = 0
+		govActionsEndDay = -1
 		global govActionsActive
 		govActionsActive = False
+		global govActionsFailure
+		govActionsFailure = -1
+		global govActionsFailurePeriod
+		govActionsFailurePeriod = -1
 
 	#Simple methods to increase or decrease global variables
 	def increaseV(vName):
@@ -626,6 +717,9 @@ class Simulation():
 		if vName == "actualInTreatment":
 			global actualInTreatment
 			actualInTreatment += 1
+		if vName == "actualTested":
+			global actualTested
+			actualTested += 1
 		if vName == "actualAInfected":
 			global actualAInfected
 			actualAInfected += 1
@@ -676,6 +770,9 @@ class Simulation():
 		if vName == "actualInTreatment":
 			global actualInTreatment
 			actualInTreatment -= 1
+		if vName == "actualTested":
+			global actualTested
+			actualTested -= 1
 		if vName == "actualAInfected":
 			global actualAInfected
 			actualAInfected -= 1

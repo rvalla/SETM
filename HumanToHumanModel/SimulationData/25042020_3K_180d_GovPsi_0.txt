@@ -1,0 +1,70 @@
+#################################
+SIMPLE EPIDEMIC TRANSMISION MODEL
+Human to human disease simulation
+---------------------------------
+---https://github/rvalla/SETM----
+#################################
+
+25042020_3K_180d_GovPsi_0
+Population: 3000
+Period in days: 180
+Humans auto isolation threshold: 0.0
+Humans psicosis threshold: 0.03
+Humans psicosis factor: 1.7
+
+----Goverment actions
+startCaseCount: 50
+actionsPeriod: 56
+infoFactor: 1.2
+socialDistanceFactor: 1.5
+isolationFactor: 2.0
+activeIsolation: False
+lockDown: False
+testingResponseFactor: 0.5
+testingResponseASFactor: 0.05
+Government failure moment: 10
+Government failure period: 3
+
+----Goverment base state
+Base info factor: 1.0
+Base isolation factor: 1.0
+Base social distance factor: 1.0
+Base testing threshold: 0.5
+Base testing asymptomatic threshold: 0.05
+Active isolation: False
+Lock down: False
+Health system colapse start: 0.001
+Health system colapse end: 0.1
+Health system colapse factor start: 1
+Health system colapse factor end: 5
+
+----Virus variables
+Base infection threshold: 0.2
+Base symptoms threshold: 0.5
+Base treatment threshold: 0.2
+Contagious fase shift from incubation end: 0
+Contagious factor when there are no symptoms: 0.2
+Death rate for patients in treatment: 0.4
+Weight of death risk in symptoms: 0.7
+Weight of death risk in treatment: 0.6
+Death risk function start age: 30
+Death risk function end age: 100
+Death risk factor start: 1
+Death risk factor end: 4
+
+----Human general randomization
+Triangular ages distribution references: 0, 100, 26
+Triangular family size distribution references: 1, 5, 1.5
+Triangular careful/socialDistance factor distribution references: 0.8, 1.2, 1.0
+Triangular incubation/illness periods distribution references: 2, 11, 4.5
+
+----Human movement randomization
+Triangular contacts count distribution references: 1, 6, 3
+Triangular exchange humans distribution references: 4, 18, 8
+Relatives weights for government infoFactor and socialDistanceFactor: 2, 3
+
+----Simulation start
+3 infected humans were injected in urban area A.
+
+1. Government actions started in day 21 and finished in day 77
+1. Population psicosis cycles:[28, 29, 30, 32, 34, 51, 54, 55, 88, 111]

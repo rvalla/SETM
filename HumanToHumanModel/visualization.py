@@ -19,7 +19,8 @@ class Visualization():
 		dataFrame = pd.read_csv(fileName)
 		return dataFrame
 	
-	def simulationVisualization(simulationName, population):
+	def simulationVisualization(simulationName, population, govActions, govFailure, govStart, govEnd, \
+														govFStart, govFPeriod, psicosis, psicosisCycles):
 		simulationData = Visualization.loadFile(simulationFile + ".csv")			
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
 		figure.suptitle("Results for " + simulationName, fontsize=13)
@@ -28,7 +29,7 @@ class Visualization():
 		total = simulationData["Total deaths"].plot(kind="line", linewidth=2.0, color="tab:red", label="Total deaths")
 		total = simulationData["Total tested"].plot(kind="line", linewidth=2.0, color="tab:blue", label="Tested")
 		total = simulationData["Total recovered"].plot(kind="line", linewidth=2.0, color="limegreen", label="Recovered")
-		total.legend(loc=2, prop={'size': 8})
+		total.legend(loc=0, prop={'size': 8})
 		total.set_title("Total cases", fontsize=10)
 		total.set_ylabel("")
 		total.set_ylim(0, population)
@@ -36,24 +37,40 @@ class Visualization():
 		actual = simulationData["Infected"].plot(kind="line", linewidth=1.5, color="orange", label="Total")
 		actual = simulationData["Infected in A"].plot(kind="line", linewidth=1.5, color="indianred", label="Area A")
 		actual = simulationData["Infected in B"].plot(kind="line", linewidth=1.5, color="teal", label="Area B")
-		actual.legend(loc=2, prop={'size': 8})
+		actual.legend(loc=0, prop={'size': 8})
 		actual.set_title("Actual infected patients", fontsize=10)
 		actual.set_ylabel("")
+		if govActions == True:
+			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+		if psicosis == True:
+			Visualization.paintPsicosis(psicosisCycles)
 		plt.subplot2grid((3, 2), (1, 1))
+		auxlist = simulationData["Total infected"].values.tolist()
+		newcases = Visualization.getNewCases(auxlist)
+		newcasesav = Visualization.getNewCasesAv(newcases)
+		plt.plot(newcasesav, label="3 day average", linewidth=2.0, color="indianred")
+		plt.plot(newcases, label="Daily count", linewidth=1.5, alpha=0.4, color="darkslategray")
+		if govActions == True:
+			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+		if psicosis == True:
+			Visualization.paintPsicosis(psicosisCycles)
+		plt.title("New cases", fontsize=10)
+		plt.legend(loc=0, prop={'size': 8})
+		plt.subplot2grid((3, 2), (2, 0))
 		treatment = simulationData["In treatment"].plot(kind="line", linewidth=1.5, color="orange", label="Total")
 		treatment = simulationData["In treatment in A"].plot(kind="line", linewidth=1.5, color="indianred", label="Area A")
 		treatment = simulationData["In treatment in B"].plot(kind="line", linewidth=1.5, color="teal", label="Area B")
-		treatment.legend(loc=2, prop={'size': 8})
+		treatment.legend(loc=0, prop={'size': 8})
 		treatment.set_title("Patients in treatment", fontsize=10)
 		treatment.set_ylabel("")
-		plt.subplot2grid((3, 2), (2, 0))
+		if govActions == True:
+			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+		if psicosis == True:
+			Visualization.paintPsicosis(psicosisCycles)
+		plt.subplot2grid((3, 2), (2, 1))
 		deathrate = simulationData["Death rate"].plot(kind="line", linewidth=2.0, color="indianred")
 		deathrate.set_ylabel("")
 		deathrate.set_title("Death rate evolution", fontsize=10)
-		plt.subplot2grid((3, 2), (2, 1))
-		infectedratio = simulationData["Infected population %"].plot(kind="line", linewidth=2.0, color="teal")
-		infectedratio.set_ylabel("")
-		infectedratio.set_title("Infected population ratio", fontsize=10)
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png")
 	
@@ -62,7 +79,7 @@ class Visualization():
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
 		figure.suptitle("Infections in " + simulationName, fontsize=13)
 		plt.subplot2grid((3, 2), (0, 0))
-		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=7, color="tab:blue")
+		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color="tab:blue")
 		incubation.set_title("Incubation periods distribution", fontsize=10)
 		incubation.set_ylabel("")
 		plt.subplot2grid((3, 2), (0, 1))
@@ -118,3 +135,30 @@ class Visualization():
 		deathRisk.set_title("Death risk factor", fontsize=10)
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Population/" + simulationName + "_population.png")
+	
+	def paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod):
+		plt.axvspan(govStart, govEnd, edgecolor="none", alpha=0.3, facecolor="seagreen")
+		if govFailure == True:
+			plt.axvspan(govFStart, govFStart + govFPeriod, edgecolor="none", alpha=1, facecolor="w")
+			
+	def paintPsicosis(psicosisCycles):
+		limits = plt.ylim()
+		for p in range(int(len(psicosisCycles)/2)):
+			plt.fill_between([psicosisCycles[2*p], psicosisCycles[2*p+1]], limits[1]*0.9, limits[1], \
+							edgecolor="none", alpha=0.9, facecolor="tab:red", zorder=2)
+	
+	def getNewCases(datalist):
+		ls = []
+		ls.append(datalist[0])
+		for e in range(len(datalist) - 1):
+			ls.append(datalist[e+1] - datalist[e])
+		return ls
+
+	def getNewCasesAv(datalist):
+		ls = []
+		ls.append((datalist[0] + datalist[1])/2)
+		for e in range(len(datalist) - 2):
+			ls.append((datalist[e+2] + datalist[e+1] + datalist[e])/3)
+		index = len(datalist)
+		ls.append((datalist[index-1]+datalist[index-2])/2)
+		return ls

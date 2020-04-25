@@ -18,7 +18,8 @@ class ProcessingData():
 		print("-- Is symptomatic: " + str(human.isSymptomatic) + ", Contagious factor: " +
 				str(human.contagiousFactor))
 				
-	def saveConfigStart(population, period, simulationName, govBoolean, govActions, autoIsolationThreshold):
+	def saveConfigStart(population, period, simulationName, govB, govActions, \
+			autoIsolationThreshold, psicosisB, psicosisThreshold, psicosisFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		startConfig.write("#################################" + "\n")
 		startConfig.write("SIMPLE EPIDEMIC TRANSMISION MODEL" + "\n")
@@ -30,9 +31,12 @@ class ProcessingData():
 		startConfig.write(simulationName + "\n")
 		startConfig.write("Population: " + str(population) + "\n")
 		startConfig.write("Period in days: " + str(period) + "\n")
-		startConfig.write("Humans' auto isolation threshold: " + str(autoIsolationThreshold) + "\n")
-		startConfig.write("" + "\n")
-		if govBoolean == True:
+		startConfig.write("Humans auto isolation threshold: " + str(autoIsolationThreshold) + "\n")
+		if psicosisB == True:
+			startConfig.write("Humans psicosis threshold: " + str(psicosisThreshold) + "\n")
+			startConfig.write("Humans psicosis factor: " + str(psicosisFactor) + "\n")
+			startConfig.write("" + "\n")
+		if govB == True:
 			startConfig.write("----Goverment actions" + "\n")
 			startConfig.write("startCaseCount: " + str(govActions[0]) + "\n")
 			startConfig.write("actionsPeriod: " + str(govActions[1]) + "\n")
@@ -43,6 +47,9 @@ class ProcessingData():
 			startConfig.write("lockDown: " + str(govActions[6]) + "\n")
 			startConfig.write("testingResponseFactor: " + str(govActions[7]) + "\n")
 			startConfig.write("testingResponseASFactor: " + str(govActions[8]) + "\n")
+			if govActions[9] == True:
+				startConfig.write("Government failure moment: " + str(govActions[10]) + "\n")
+				startConfig.write("Government failure period: " + str(govActions[11]) + "\n")
 			startConfig.write("" + "\n")
 		startConfig.close()
 	

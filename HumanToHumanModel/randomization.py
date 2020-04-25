@@ -18,8 +18,8 @@ factor_mode = 1.0
 
 #Limits for illness development
 illness_start = 2
-illness_end = 8
-illness_mode = 5
+illness_end = 11
+illness_mode = 4.5
 
 #Limits for triangular distribution for contacts
 contacts_start = 1
@@ -32,8 +32,8 @@ exchange_end = 18
 exchange_mode = 8
 
 #Adjusting relative weights for government infoFactor and socialDistanceFactor
-infoFactorW = 1
-socialDistanceW = 4
+infoFactorW = 2
+socialDistanceW = 3
 
 class Randomization():
 	"Functions to work with the randomization of elements for simulations"
