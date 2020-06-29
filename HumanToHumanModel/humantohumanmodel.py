@@ -3,39 +3,47 @@ from visualization import Visualization as vz
 from processingdata import ProcessingData as dt
 
 #General simulation configuration
-simulationsPeriod = 180
-simulationsPopulation = 3000 #Recommendation: Population > 500 to prevent randomization errors.
+simulationsPeriod = 60
+simulationsPopulation = 600 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 1
-simulationsName = "25042020_3K_180d_GovPsi"
+simulationsName = "saraza"
 
 #How many infected humans will be injected in urban area A
 casesCeroCount = 3
 
 #Human autoisolation threshold [0;1]
-autoIsolationThreshold = 0.0 #The probability of a human will auto-isolate himself when having symptoms
-psicosis = True #Deciding if the outbreak will change humans behaivor
-psicosisThreshold = 0.03 #Infected population percentage threshold which trigger psicosis factor
+autoIsolationThreshold = 0.2 #The probability of a human will auto-isolate himself when having symptoms
+psicosis = False #Deciding if the outbreak will change humans behaivor
+psicosisThreshold = 0.02 #Infected population percentage threshold which trigger psicosis factor
 psicosisFactor = 1.7 #Improvement of humans' habits while infected population ratio > psicosisThreshold
 
 #Government countermeasures
+govActionsMode = "auto" #Can be "normal" or "auto"
+govActionsAutoTrigger =  0.015 #Decide the infected population % that triggers auto government actions.
+govActionsAutoOff = 0.012 #Decide the infected population % that deactivates auto government actions.
 startCaseCount = 50 #Number of confirmed cases needed to start government actions
 actiosPeriod = 56 #Duration for government countermeasures in days
 infoFactor = 1.2 #Value to represent government awareness campaigns
 socialDistanceFactor = 1.5 #Value to represent control of social distance
 isolationFactor = 2.0 #Value to reduce human interchange between urban areas
 activeIsolation = False #Decide if a confirmed case is totally isolated by the government
+activeTracking = False #Decide if government track tested humans close contacts to test and isolate them.
+activeTrackingThreshold = 0.5 #The probability for government to recognize a closed contact.
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
 testingResponse = 0.5 #The probability for a symptomatic human of being tested by the government
 testingASResponse = 0.05 #The probability for a asymptomatic human of being tested by the government
-govFailure = True #To set a temporarily suspension of government measures
-govFailureMoment = 10 #Day since actions start in which failure occurs: < (actionsPeriod - govFailurePeriod).
-govFailurePeriod = 3 #Days during the government measures are suspended
+
+#Government countermeasures failure
+govFailure = False #To set a temporarily suspension of government measures
+govFailureMoment = 5 #Day since actions start in which failure occurs: < (actionsPeriod - govFailurePeriod).
+govFailurePeriod = 10 #Days during the government measures are suspended
 
 #Deciding to run or not tu run government actions
 runGovActions = True
-govActions = [startCaseCount, actiosPeriod, infoFactor, socialDistanceFactor, isolationFactor, \
-				activeIsolation, lockDown, testingResponse, testingASResponse, govFailure, \
-				govFailureMoment, govFailurePeriod]
+govActions = [govActionsMode, govActionsAutoTrigger, govActionsAutoOff, startCaseCount, actiosPeriod, infoFactor, \
+				socialDistanceFactor, isolationFactor, activeIsolation, activeTracking, \
+				activeTrackingThreshold, lockDown, testingResponse, testingASResponse]
+govFailureList = [govFailure, govFailureMoment, govFailurePeriod]
 
 print("#################################")
 print("SIMPLE EPIDEMIC TRANSMISION MODEL")
@@ -52,16 +60,13 @@ for i in range(simulationsCount):
 	simulationName = simulationsName + "_" + str(i)
 	if i == 0:
 		dt.saveConfigStart(simulationsPopulation, simulationsPeriod, simulationName, runGovActions, \
-			govActions, autoIsolationThreshold, psicosis, psicosisThreshold, psicosisFactor)
+			govActions, govFailureList, autoIsolationThreshold, psicosis, psicosisThreshold, psicosisFactor)
 	s = sim(simulationsPopulation, simulationsPeriod, i + 1, casesCeroCount, simulationName, \
-		govActions, runGovActions, autoIsolationThreshold, psicosis, psicosisThreshold, psicosisFactor)
+		runGovActions, govActions, govFailureList, autoIsolationThreshold, psicosis, psicosisThreshold, \
+		psicosisFactor)
 	vz.getFileNames(simulationName)
 	vz.populationVisualization(simulationName)
-	govStart = sim.getGovActionsStartDay()
-	govEnd = sim.getGovActionsEndDay()
-	govFailureS = sim.getGovActionsFailure()
-	govFailureP = sim.getGovActionsFailurePeriod()
+	govActionsCycles = sim.getGovActionsCycles()
 	psicosisCycles = sim.getPsicosisCycles()
-	vz.simulationVisualization(simulationName, simulationsPopulation, runGovActions, govFailure, \
-		govStart, govEnd, govFailureS, govFailureP, psicosis, psicosisCycles)
+	vz.simulationVisualization(simulationName, runGovActions, govActionsCycles, psicosis, psicosisCycles)
 	vz.infectionsVisualization(simulationName)

@@ -4,6 +4,7 @@ class Human():
 	def __init__(self, humanNumber):
 	
 		self.humanNumber = humanNumber
+		self.infectionNumber = 0
 		
 		#Defining some human characteristics
 		self.age = 0
@@ -13,6 +14,7 @@ class Human():
 		self.familyNumber = 0
 		self.family = []
 		self.contacts = []
+		self.contactsHistory = set()
 		
 		#Risk evaluation...
 		self.carefulFactor = 1.0
@@ -36,3 +38,4 @@ class Human():
 		
 		#Boolean to define if human was diagnosed
 		self.wasTested = False
+		self.isTested = False

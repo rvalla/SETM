@@ -1,4 +1,7 @@
 "Store values to simulate goverment countermeasures"
+actionsMode = "manual"
+autoActionsTrigger = 1.0
+autoActionsOff = 0.0
 startCaseCount = 0
 actionsPeriod = 0
 baseInfoFactor = 1.0
@@ -12,6 +15,8 @@ currentSocialDistanceFactor = 1.0
 testingResponseThreshold = 0.5
 testingResponseASThreshold = 0.05
 activeIsolation = False #Determine if the government strictly isolate confirmed cases
+activeTracking = False #Determine if the government isolate infected human's closed contacts
+activeTrackingThreshold = 0.5 #The probability of isolating a infected human's closed contact
 lockDown = False
 colapseStart = 0.001 #Start age to calculate death risk factor function
 colapseEnd = 0.1 #End age to calculate death risk factor function
@@ -56,6 +61,27 @@ class GovermentActions():
 		global polynomialColapseC
 		polynomialColapseC = colapseStart * colapseStart * \
 						polynomialColapseA + colapseFactorStart
+	
+	def setActionsMode(status):
+		global actionsMode
+		actionsMode = status
+	
+	def getActionsMode():
+		return actionsMode
+	
+	def setAutoActionsTrigger(threshold):
+		global autoActionsTrigger
+		autoActionsTrigger = threshold
+	
+	def getAutoActionsTrigger():
+		return autoActionsTrigger
+	
+	def setAutoActionsOff(threshold):
+		global autoActionsOff
+		autoActionsOff = threshold
+	
+	def getAutoActionsOff():
+		return autoActionsOff
 	
 	def setStartCaseCount(day):
 		global startCaseCount
@@ -106,6 +132,20 @@ class GovermentActions():
 	def getActiveIsolation():
 		return activeIsolation
 	
+	def setActiveTracking(status):
+		global activeTracking
+		activeTracking = status
+	
+	def getActiveTracking():
+		return activeTracking
+	
+	def setActiveTrackingThreshold(threshold):
+		global activeTrackingThreshold
+		activeTrackingThreshold = threshold
+	
+	def getActiveTrackingThreshold():
+		return activeTrackingThreshold
+	
 	def setTestingResponseThreshold(threshold):
 		global testingResponseThreshold
 		testingResponseThreshold = threshold
@@ -130,7 +170,6 @@ class GovermentActions():
 		govConfig.write("Base testing threshold: " + str(baseTestingThreshold) + "\n")
 		govConfig.write("Base testing asymptomatic threshold: " + str(baseTestingASThreshold) + "\n")
 		govConfig.write("Active isolation: " + str(activeIsolation) + "\n")
-		govConfig.write("Lock down: " + str(lockDown) + "\n")
 		govConfig.write("Health system colapse start: " + str(colapseStart) + "\n")
 		govConfig.write("Health system colapse end: " + str(colapseEnd) + "\n")
 		govConfig.write("Health system colapse factor start: " + str(colapseFactorStart) + "\n")

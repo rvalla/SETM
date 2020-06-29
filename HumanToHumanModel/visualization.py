@@ -5,6 +5,23 @@ populationFile = ""
 simulationFile = ""
 infectionsFile = ""
 
+#Let's make this charts beautiful
+defaultFont = "Oswald" #Change this if you don't like it or is not available in your system
+legendFont = "Myriad Pro" #Change this to edit legends' font 
+backgroundPlot = "lightgray" #Default background color for charts
+backgroundFigure = "gainsboro" #Default background color for figures
+majorGridColor = "dimgrey" #Default colors for grids...
+minorGridColor = "dimgray"
+alphaMGC = 0.7
+alphamGC = 0.9
+imageResolution = 150
+widthBig = 2.5
+widthNormal = 2.0
+widthSmall = 1.5
+plotColors = ["orange", "tab:red", "tab:blue", "limegreen", "indianred", "teal", "darkslategray", \
+			"mediumseagreen", "orangered", "goldenrod"]
+paintColors = ["seagreen", "tab:red"]
+
 class Visualization():
 
 	def getFileNames(simulationName):
@@ -19,133 +36,154 @@ class Visualization():
 		dataFrame = pd.read_csv(fileName)
 		return dataFrame
 	
-	def simulationVisualization(simulationName, population, govActions, govFailure, govStart, govEnd, \
-														govFStart, govFPeriod, psicosis, psicosisCycles):
+	def gridAndBackground():
+		plt.grid(which='both', axis='both')
+		plt.minorticks_on()
+		plt.grid(True, "major", "y", ls="-", lw=0.8, c=majorGridColor, alpha=alphaMGC)
+		plt.grid(True, "minor", "y", ls="--", lw=0.3, c=minorGridColor, alpha=alphamGC)
+		plt.grid(True, "major", "x", ls="-", lw=0.8, c=majorGridColor, alpha=alphaMGC)
+		plt.grid(True, "minor", "x", ls="--", lw=0.3, c=minorGridColor, alpha=alphamGC)
+		plt.xticks(fontsize=8)
+		plt.yticks(fontsize=8)
+		plt.gca().set_facecolor(backgroundPlot)
+	
+	def background():
+		plt.xticks(fontsize=8)
+		plt.yticks(fontsize=8)
+		plt.gca().set_facecolor(backgroundPlot)
+	
+	def simulationVisualization(simulationName, govActions, govActionsCycles, psicosis, psicosisCycles):
 		simulationData = Visualization.loadFile(simulationFile + ".csv")			
-		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
-		figure.suptitle("Results for " + simulationName, fontsize=13)
+		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
+		figure.suptitle("Results for " + simulationName, fontsize=13, fontname=defaultFont)
 		plt.subplot2grid((3, 2), (0, 0), colspan=2)
-		total = simulationData["Total infected"].plot(kind="line", linewidth=2.0, color="orange", label="Total infected")
-		total = simulationData["Total deaths"].plot(kind="line", linewidth=2.0, color="tab:red", label="Total deaths")
-		total = simulationData["Total tested"].plot(kind="line", linewidth=2.0, color="tab:blue", label="Tested")
-		total = simulationData["Total recovered"].plot(kind="line", linewidth=2.0, color="limegreen", label="Recovered")
-		total.legend(loc=0, prop={'size': 8})
-		total.set_title("Total cases", fontsize=10)
+		total = simulationData["Total infected"].plot(kind="line", linewidth=widthBig, color=plotColors[0], label="Total infected")
+		total = simulationData["Total deaths"].plot(kind="line", linewidth=widthBig, color=plotColors[1], label="Total deaths")
+		total = simulationData["Total tested"].plot(kind="line", linewidth=widthBig, color=plotColors[2], label="Tested")
+		total = simulationData["Total recovered"].plot(kind="line", linewidth=widthBig, color=plotColors[3], label="Recovered")
+		total.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
+		total.set_title("Total cases", fontsize=10, fontname=defaultFont)
 		total.set_ylabel("")
-		total.set_ylim(0, population)
+		Visualization.gridAndBackground()
 		plt.subplot2grid((3, 2), (1, 0))
-		actual = simulationData["Infected"].plot(kind="line", linewidth=1.5, color="orange", label="Total")
-		actual = simulationData["Infected in A"].plot(kind="line", linewidth=1.5, color="indianred", label="Area A")
-		actual = simulationData["Infected in B"].plot(kind="line", linewidth=1.5, color="teal", label="Area B")
-		actual.legend(loc=0, prop={'size': 8})
-		actual.set_title("Actual infected patients", fontsize=10)
+		actual = simulationData["Infected"].plot(kind="line", linewidth=widthNormal, color=plotColors[0], label="Total")
+		actual = simulationData["Infected in A"].plot(kind="line", linewidth=widthNormal, color=plotColors[4], label="Area A")
+		actual = simulationData["Infected in B"].plot(kind="line", linewidth=widthNormal, color=plotColors[5], label="Area B")
+		actual = simulationData["Actual tested"].plot(kind="line", linewidth=widthNormal, color=plotColors[7], label="Tested")
+		actual.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
+		actual.set_title("Actual infected patients", fontsize=10, fontname=defaultFont)
 		actual.set_ylabel("")
 		if govActions == True:
-			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+			Visualization.paintGovActions(govActionsCycles)
 		if psicosis == True:
 			Visualization.paintPsicosis(psicosisCycles)
+		Visualization.gridAndBackground()
 		plt.subplot2grid((3, 2), (1, 1))
 		auxlist = simulationData["Total infected"].values.tolist()
 		newcases = Visualization.getNewCases(auxlist)
 		newcasesav = Visualization.getNewCasesAv(newcases)
-		plt.plot(newcasesav, label="3 day average", linewidth=2.0, color="indianred")
-		plt.plot(newcases, label="Daily count", linewidth=1.5, alpha=0.4, color="darkslategray")
+		plt.plot(newcases, label="Daily count", linewidth=widthSmall, alpha=0.4, color=plotColors[6])
+		plt.plot(newcasesav, label="5 day average", linewidth=widthBig, color=plotColors[0])
 		if govActions == True:
-			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+			Visualization.paintGovActions(govActionsCycles)
 		if psicosis == True:
 			Visualization.paintPsicosis(psicosisCycles)
-		plt.title("New cases", fontsize=10)
-		plt.legend(loc=0, prop={'size': 8})
+		plt.title("New cases", fontsize=10, fontname=defaultFont)
+		plt.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
+		Visualization.gridAndBackground()
 		plt.subplot2grid((3, 2), (2, 0))
-		treatment = simulationData["In treatment"].plot(kind="line", linewidth=1.5, color="orange", label="Total")
-		treatment = simulationData["In treatment in A"].plot(kind="line", linewidth=1.5, color="indianred", label="Area A")
-		treatment = simulationData["In treatment in B"].plot(kind="line", linewidth=1.5, color="teal", label="Area B")
-		treatment.legend(loc=0, prop={'size': 8})
-		treatment.set_title("Patients in treatment", fontsize=10)
+		treatment = simulationData["In treatment"].plot(kind="line", linewidth=widthNormal, color=plotColors[0], label="Total")
+		treatment = simulationData["In treatment in A"].plot(kind="line", linewidth=widthNormal, color=plotColors[4], label="Area A")
+		treatment = simulationData["In treatment in B"].plot(kind="line", linewidth=widthNormal, color=plotColors[5], label="Area B")
+		treatment.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
+		treatment.set_title("Patients in treatment", fontsize=10, fontname=defaultFont)
 		treatment.set_ylabel("")
 		if govActions == True:
-			Visualization.paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod)
+			Visualization.paintGovActions(govActionsCycles)
 		if psicosis == True:
 			Visualization.paintPsicosis(psicosisCycles)
+		Visualization.gridAndBackground()
 		plt.subplot2grid((3, 2), (2, 1))
-		deathrate = simulationData["Death rate"].plot(kind="line", linewidth=2.0, color="indianred")
+		deathrate = simulationData["Death rate"].plot(kind="line", linewidth=widthBig, color=plotColors[4])
 		deathrate.set_ylabel("")
-		deathrate.set_title("Death rate evolution", fontsize=10)
+		deathrate.set_title("Death rate evolution", fontsize=10, fontname=defaultFont)
+		Visualization.gridAndBackground()
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png")
+		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png", facecolor=figure.get_facecolor())
 	
 	def infectionsVisualization(simulationName):
 		infectionsData = Visualization.loadFile(infectionsFile + ".csv")		
-		figure = plt.figure(num=None, figsize=(9, 6), dpi=150, facecolor='w', edgecolor='k')
-		figure.suptitle("Infections in " + simulationName, fontsize=13)
+		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
+		figure.suptitle("Infections in " + simulationName, fontsize=13, fontname=defaultFont)
 		plt.subplot2grid((3, 2), (0, 0))
-		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color="tab:blue")
-		incubation.set_title("Incubation periods distribution", fontsize=10)
+		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color=plotColors[2])
+		incubation.set_title("Incubation periods distribution", fontsize=10, fontname=defaultFont)
 		incubation.set_ylabel("")
+		Visualization.background()
 		plt.subplot2grid((3, 2), (0, 1))
-		illness = infectionsData["Total illness period"].plot(kind="hist", bins=10, color="tab:blue")
-		illness.set_title("Total illness period distribution", fontsize=10)
+		illness = infectionsData["Total illness period"].plot(kind="hist", bins=10, color=plotColors[2])
+		illness.set_title("Total illness period distribution", fontsize=10, fontname=defaultFont)
 		illness.set_ylabel("")
+		Visualization.background()
 		plt.subplot2grid((3, 2), (1, 0))
-		tested = infectionsData["Was tested?"].value_counts().plot(kind="barh", color="mediumseagreen")
+		tested = infectionsData["Was tested?"].value_counts().plot(kind="barh", color=plotColors[7])
 		tested.set_ylabel("")
-		tested.set_title("Was a confirmed case?", fontsize=10)
+		tested.set_title("Was a confirmed case?", fontsize=10, fontname=defaultFont)
+		Visualization.background()
 		plt.subplot2grid((3, 2), (1, 1))
-		deaths = infectionsData["Is dead?"].value_counts().plot(kind="barh", color="orangered")
+		deaths = infectionsData["Is dead?"].value_counts().plot(kind="barh", color=plotColors[8])
 		deaths.set_ylabel("")
-		deaths.set_title("Has died?", fontsize=10)
+		deaths.set_title("Has died?", fontsize=10, fontname=defaultFont)
+		Visualization.background()
 		plt.subplot2grid((3, 2), (2, 0))
-		symptoms = infectionsData["Had symptoms?"].value_counts().plot(kind="barh", color="goldenrod")
+		symptoms = infectionsData["Had symptoms?"].value_counts().plot(kind="barh", color=plotColors[9])
 		symptoms.set_ylabel("")
-		symptoms.set_title("Had symptoms?", fontsize=10)
+		symptoms.set_title("Had symptoms?", fontsize=10, fontname=defaultFont)
+		Visualization.background()
 		plt.subplot2grid((3, 2), (2, 1))
-		treatment = infectionsData["Was treated?"].value_counts().plot(kind="barh", color="orangered")
+		treatment = infectionsData["Was treated?"].value_counts().plot(kind="barh", color=plotColors[8])
 		treatment.set_ylabel("")
-		treatment.set_title("Was treated?", fontsize=10)
+		treatment.set_title("Was treated?", fontsize=10, fontname=defaultFont)
+		Visualization.background()
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-		plt.savefig("SimulationPlots/Infections/" + simulationName + "_infections.png")
+		plt.savefig("SimulationPlots/Infections/" + simulationName + "_infections.png", facecolor=figure.get_facecolor())
 	
 	def populationVisualization(simulationName):
 		populationData = Visualization.loadFile(populationFile + ".csv")		
-		figure = plt.figure(num=None, figsize=(8, 6), dpi=150)
-		figure.suptitle("Population summary: " + simulationName, fontsize=13)
-		plt.subplot2grid((4, 4), (0, 0), colspan=2, rowspan=5)
-		ageDistribution = populationData["Age"].plot(kind="hist", bins=50, color="tab:blue")
+		figure = plt.figure(num=None, figsize=(8, 6), dpi=imageResolution, facecolor=backgroundFigure)
+		figure.suptitle("Population summary: " + simulationName, fontsize=13, fontname=defaultFont)
+		plt.subplot2grid((4, 2), (0, 0), rowspan=4)
+		ageDistribution = populationData["Age"].plot(kind="hist", bins=50, color=plotColors[2])
 		ageDistribution.set_ylabel("")
-		ageDistribution.set_title("Age distribution", fontsize=10)
-		plt.subplot2grid((4, 4), (0, 2))
-		symptoms = populationData["Symptomatic"].value_counts().plot(kind="barh", color="orange")
-		symptoms.set_ylabel("")
-		symptoms.set_title("Symptomatic", fontsize=10)
-		plt.subplot2grid((4, 4), (0, 3))
-		treatment = populationData["Severe illness"].value_counts().plot(kind="barh", color="orangered")
-		treatment.set_ylabel("")
-		treatment.set_title("Sever illness", fontsize=10)
-		plt.subplot2grid((4, 4), (1, 2), colspan=2)
-		careful = populationData["Careful factor"].plot(kind="hist", bins=50, color="teal")
+		ageDistribution.set_title("Age distribution", fontsize=10, fontname=defaultFont)
+		Visualization.background()
+		plt.subplot2grid((4, 2), (0, 1))
+		careful = populationData["Careful factor"].plot(kind="hist", bins=50, color=plotColors[5])
 		careful.set_ylabel("")
-		careful.set_title("Careful factor", fontsize=10)
-		plt.subplot2grid((4, 4), (2, 2), colspan=2)
-		socialDistance = populationData["Social distance factor"].plot(kind="hist", bins=50, color="teal")
+		careful.set_title("Careful factor", fontsize=10, fontname=defaultFont)
+		Visualization.background()
+		plt.subplot2grid((4, 2), (1, 1))
+		socialDistance = populationData["Social distance factor"].plot(kind="hist", bins=50, color=plotColors[5])
 		socialDistance.set_ylabel("")
-		socialDistance.set_title("Social distance factor", fontsize=10)
-		plt.subplot2grid((4, 4), (3, 2), colspan=2)	
-		deathRisk = populationData["Death risk factor"].plot(kind="hist", bins=50, color="teal")
+		socialDistance.set_title("Social distance factor", fontsize=10, fontname=defaultFont)
+		Visualization.background()
+		plt.subplot2grid((4, 2), (2, 1), rowspan=2)	
+		deathRisk = populationData["Death risk factor"].plot(kind="hist", bins=50, color=plotColors[4])
 		deathRisk.set_ylabel("")
-		deathRisk.set_title("Death risk factor", fontsize=10)
+		deathRisk.set_title("Death risk factor", fontsize=10, fontname=defaultFont)
+		Visualization.background()
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-		plt.savefig("SimulationPlots/Population/" + simulationName + "_population.png")
+		plt.savefig("SimulationPlots/Population/" + simulationName + "_population.png", facecolor=figure.get_facecolor())
 	
-	def paintGovActions(govFailure, govStart, govEnd, govFStart, govFPeriod):
-		plt.axvspan(govStart, govEnd, edgecolor="none", alpha=0.3, facecolor="seagreen")
-		if govFailure == True:
-			plt.axvspan(govFStart, govFStart + govFPeriod, edgecolor="none", alpha=1, facecolor="w")
+	def paintGovActions(govActionsCycles):
+		for p in range(int(len(govActionsCycles)/2)):
+			plt.axvspan(govActionsCycles[2*p], govActionsCycles[2*p+1], edgecolor="none", alpha=0.3, facecolor=paintColors[0])
 			
 	def paintPsicosis(psicosisCycles):
 		limits = plt.ylim()
 		for p in range(int(len(psicosisCycles)/2)):
 			plt.fill_between([psicosisCycles[2*p], psicosisCycles[2*p+1]], limits[1]*0.9, limits[1], \
-							edgecolor="none", alpha=0.9, facecolor="tab:red", zorder=2)
+							edgecolor="none", alpha=0.9, facecolor=paintColors[1], zorder=2)
 	
 	def getNewCases(datalist):
 		ls = []
@@ -156,9 +194,11 @@ class Visualization():
 
 	def getNewCasesAv(datalist):
 		ls = []
-		ls.append((datalist[0] + datalist[1])/2)
-		for e in range(len(datalist) - 2):
-			ls.append((datalist[e+2] + datalist[e+1] + datalist[e])/3)
+		ls.append(None)
+		ls.append(None)
+		for e in range(len(datalist) - 4):
+			ls.append((datalist[e+4] + datalist[e+3] + datalist[e+2] + datalist[e+1] + datalist[e])/5)
 		index = len(datalist)
-		ls.append((datalist[index-1]+datalist[index-2])/2)
+		ls.append(None)
+		ls.append(None)
 		return ls

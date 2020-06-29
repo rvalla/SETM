@@ -18,7 +18,7 @@ class ProcessingData():
 		print("-- Is symptomatic: " + str(human.isSymptomatic) + ", Contagious factor: " +
 				str(human.contagiousFactor))
 				
-	def saveConfigStart(population, period, simulationName, govB, govActions, \
+	def saveConfigStart(population, period, simulationName, govB, govActions, govFailure, \
 			autoIsolationThreshold, psicosisB, psicosisThreshold, psicosisFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		startConfig.write("#################################" + "\n")
@@ -37,19 +37,27 @@ class ProcessingData():
 			startConfig.write("Humans psicosis factor: " + str(psicosisFactor) + "\n")
 			startConfig.write("" + "\n")
 		if govB == True:
-			startConfig.write("----Goverment actions" + "\n")
-			startConfig.write("startCaseCount: " + str(govActions[0]) + "\n")
-			startConfig.write("actionsPeriod: " + str(govActions[1]) + "\n")
-			startConfig.write("infoFactor: " + str(govActions[2]) + "\n")
-			startConfig.write("socialDistanceFactor: " + str(govActions[3]) + "\n")
-			startConfig.write("isolationFactor: " + str(govActions[4]) + "\n")
-			startConfig.write("activeIsolation: " + str(govActions[5]) + "\n")
-			startConfig.write("lockDown: " + str(govActions[6]) + "\n")
-			startConfig.write("testingResponseFactor: " + str(govActions[7]) + "\n")
-			startConfig.write("testingResponseASFactor: " + str(govActions[8]) + "\n")
-			if govActions[9] == True:
-				startConfig.write("Government failure moment: " + str(govActions[10]) + "\n")
-				startConfig.write("Government failure period: " + str(govActions[11]) + "\n")
+			startConfig.write("----Government actions" + "\n")
+			if govActions[0] == "normal":
+				startConfig.write("Government actions mode: normal" + "\n")
+				startConfig.write("startCaseCount: " + str(govActions[3]) + "\n")
+				startConfig.write("actionsPeriod: " + str(govActions[4]) + "\n")
+				if govActions[9] == True:
+					startConfig.write("Government failure moment: " + str(govFailure[1]) + "\n")
+					startConfig.write("Government failure period: " + str(govFailure[2]) + "\n")
+			if govActions[0] == "auto":
+				startConfig.write("Government actions mode: auto" + "\n")
+				startConfig.write("Auto trigger threshold: " + str(govActions[1]) + "\n")
+				startConfig.write("Auto Off threshold: " + str(govActions[2]) + "\n")
+			startConfig.write("infoFactor: " + str(govActions[5]) + "\n")
+			startConfig.write("socialDistanceFactor: " + str(govActions[6]) + "\n")
+			startConfig.write("isolationFactor: " + str(govActions[7]) + "\n")
+			startConfig.write("activeIsolation: " + str(govActions[8]) + "\n")
+			startConfig.write("activeTracking: " + str(govActions[9]) + "\n")
+			startConfig.write("activeTrackingThreshold: " + str(govActions[10]) + "\n")
+			startConfig.write("lockDown: " + str(govActions[11]) + "\n")
+			startConfig.write("testingResponseFactor: " + str(govActions[12]) + "\n")
+			startConfig.write("testingResponseASFactor: " + str(govActions[13]) + "\n")
 			startConfig.write("" + "\n")
 		startConfig.close()
 	
