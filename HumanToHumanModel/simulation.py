@@ -278,7 +278,7 @@ class Simulation():
 				Simulation.contactTracking(notTestedHuman.family, notTestedHuman.contactsHistory, area)
 	
 	def testHuman(human, area):
-		if human.isInfected == True:
+		if human.isInfected == True and human.isTested == False:
 			human.isTested = True
 			human.wasTested = True
 			Simulation.decideActiveIsolation(human)
@@ -304,7 +304,7 @@ class Simulation():
 					Simulation.lookForContact(c, "A")
 				elif c in humansInB:
 					Simulation.lookForContact(c, "B")
-	
+
 	def lookForContact(humanNumber, area):
 		if area == "A":
 			hIndex = Simulation.getHumanIndex(areaAHumans, humanNumber)
@@ -447,9 +447,9 @@ class Simulation():
 		return inTreatment
 		
 	def checkGovermentActions(actualDay, govActionsList, govFaiLureList):
-		if govActionsList[0] == "normal":
+		if govMode == "normal":
 			Simulation.checkNormalGovActions(actualDay, govActionsList, govFaiLureList)
-		elif govActionsList[1] == "auto":
+		elif govMode == "auto":
 			Simulation.checkAutoGovActions(actualDay, govActionsList)
 			
 	def checkNormalGovActions(actualDay, govActionsList, govFailureList):
@@ -474,16 +474,18 @@ class Simulation():
 	
 	def checkAutoGovActions(actualDay, govActionsList):
 		global govActionsActive
+		global govActionsActive
 		if knownInfectedRatio > gov.getAutoActionsTrigger():
-			govActionsActive = True
-			global govActionsStartDay
-			govActionsStartDay = actualDay
-			Simulation.startGovActions(actualDay, govActionsList)
-			govActionsCycles.append(actualDay)
+			if govActionsActive == False:
+				govActionsActive = True
+				global govActionsStartDay
+				govActionsStartDay = actualDay
+				Simulation.startGovActions(actualDay, govActionsList)
 		elif knownInfectedRatio < gov.getAutoActionsOff():
-			govActionsActive = False
-			gov.resetCountermeasures()
-			govActionsCycles.append(actualDay)
+			if govActionsActive == True:
+				govActionsActive = False
+				gov.resetCountermeasures()
+				govActionsCycles.append(actualDay)
 				
 	def startGovActions(actualDay, govActionsList):
 		gov.setInfoFactor(govActionsList[5])

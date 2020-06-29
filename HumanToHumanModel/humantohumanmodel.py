@@ -3,8 +3,8 @@ from visualization import Visualization as vz
 from processingdata import ProcessingData as dt
 
 #General simulation configuration
-simulationsPeriod = 60
-simulationsPopulation = 600 #Recommendation: Population > 500 to prevent randomization errors.
+simulationsPeriod = 120
+simulationsPopulation = 1500 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 1
 simulationsName = "saraza"
 
@@ -12,23 +12,23 @@ simulationsName = "saraza"
 casesCeroCount = 3
 
 #Human autoisolation threshold [0;1]
-autoIsolationThreshold = 0.2 #The probability of a human will auto-isolate himself when having symptoms
+autoIsolationThreshold = 0.25 #The probability of a human will auto-isolate himself when having symptoms
 psicosis = False #Deciding if the outbreak will change humans behaivor
 psicosisThreshold = 0.02 #Infected population percentage threshold which trigger psicosis factor
 psicosisFactor = 1.7 #Improvement of humans' habits while infected population ratio > psicosisThreshold
 
 #Government countermeasures
 govActionsMode = "auto" #Can be "normal" or "auto"
-govActionsAutoTrigger =  0.015 #Decide the infected population % that triggers auto government actions.
-govActionsAutoOff = 0.012 #Decide the infected population % that deactivates auto government actions.
+govActionsAutoTrigger =  0.03 #Decide the infected population % that triggers auto government actions.
+govActionsAutoOff = 0.028#Decide the infected population % that deactivates auto government actions.
 startCaseCount = 50 #Number of confirmed cases needed to start government actions
 actiosPeriod = 56 #Duration for government countermeasures in days
 infoFactor = 1.2 #Value to represent government awareness campaigns
 socialDistanceFactor = 1.5 #Value to represent control of social distance
 isolationFactor = 2.0 #Value to reduce human interchange between urban areas
 activeIsolation = False #Decide if a confirmed case is totally isolated by the government
-activeTracking = False #Decide if government track tested humans close contacts to test and isolate them.
-activeTrackingThreshold = 0.5 #The probability for government to recognize a closed contact.
+activeTracking = True #Decide if government track tested humans close contacts to test and isolate them.
+activeTrackingThreshold = 0.25 #The probability for government to recognize a closed contact.
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
 testingResponse = 0.5 #The probability for a symptomatic human of being tested by the government
 testingASResponse = 0.05 #The probability for a asymptomatic human of being tested by the government
@@ -39,7 +39,7 @@ govFailureMoment = 5 #Day since actions start in which failure occurs: < (action
 govFailurePeriod = 10 #Days during the government measures are suspended
 
 #Deciding to run or not tu run government actions
-runGovActions = True
+runGovActions = False
 govActions = [govActionsMode, govActionsAutoTrigger, govActionsAutoOff, startCaseCount, actiosPeriod, infoFactor, \
 				socialDistanceFactor, isolationFactor, activeIsolation, activeTracking, \
 				activeTrackingThreshold, lockDown, testingResponse, testingASResponse]
