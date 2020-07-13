@@ -377,6 +377,7 @@ class Simulation():
 		Simulation.saveInfection(human, False)
 		human.isSymptomatic = False
 		human.isInTreatment = False
+		human.isIsolated = False
 		if human.isTested == True:
 			Simulation.decreaseV("actualTested")
 		if area == "A":

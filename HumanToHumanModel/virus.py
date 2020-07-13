@@ -1,6 +1,6 @@
 baseInfectionThreshold = 0.2 #How contagious the virus is
 baseASContagiousFactor = 0.2 #Contagious factor in absence of symptoms
-baseSymptomsThreshold = 0.5 #Probability of having symptoms
+baseSymptomsThreshold = 0.4 #Probability of having symptoms
 baseTreatmentThreshold = 0.2 #Probability of needing treatment
 baseFutureImmunity = 1.0 #Probability of being inmune after infection
 contagiousShift = 0 #Days offset between mosto contagious face and symptoms

@@ -52,7 +52,16 @@ class Visualization():
 		plt.yticks(fontsize=8)
 		plt.gca().set_facecolor(backgroundPlot)
 	
-	def simulationVisualization(simulationName, govActions, govActionsCycles, psicosis, psicosisCycles):
+	def getyLimit(population, maxvalue):
+		ylim = []
+		ylim.append(0)
+		limit = population
+		while limit < maxvalue:
+			limit += population
+		ylim.append(limit)
+		return ylim
+	
+	def simulationVisualization(simulationName, govActions, govActionsCycles, psicosis, psicosisCycles, simulationsPopulation):
 		simulationData = Visualization.loadFile(simulationFile + ".csv")			
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
 		figure.suptitle("Results for " + simulationName, fontsize=13, fontname=defaultFont)
@@ -64,6 +73,9 @@ class Visualization():
 		total.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
 		total.set_title("Total cases", fontsize=10, fontname=defaultFont)
 		total.set_ylabel("")
+		maxinfected = simulationData["Total infected"].max()
+		ylim = Visualization.getyLimit(simulationsPopulation, maxinfected)
+		total.set_ylim(ylim[0], ylim[1])
 		Visualization.gridAndBackground()
 		plt.subplot2grid((3, 2), (1, 0))
 		actual = simulationData["Infected"].plot(kind="line", linewidth=widthNormal, color=plotColors[0], label="Total")

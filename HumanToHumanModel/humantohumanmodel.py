@@ -6,13 +6,13 @@ from processingdata import ProcessingData as dt
 simulationsPeriod = 120
 simulationsPopulation = 1500 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 1
-simulationsName = "saraza"
+simulationsName = "saraza3"
 
 #How many infected humans will be injected in urban area A
 casesCeroCount = 3
 
 #Human autoisolation threshold [0;1]
-autoIsolationThreshold = 0.25 #The probability of a human will auto-isolate himself when having symptoms
+autoIsolationThreshold = 0.0 #The probability of a human will auto-isolate himself when having symptoms
 psicosis = False #Deciding if the outbreak will change humans behaivor
 psicosisThreshold = 0.02 #Infected population percentage threshold which trigger psicosis factor
 psicosisFactor = 1.7 #Improvement of humans' habits while infected population ratio > psicosisThreshold
@@ -26,12 +26,12 @@ actiosPeriod = 56 #Duration for government countermeasures in days
 infoFactor = 1.2 #Value to represent government awareness campaigns
 socialDistanceFactor = 1.5 #Value to represent control of social distance
 isolationFactor = 2.0 #Value to reduce human interchange between urban areas
-activeIsolation = False #Decide if a confirmed case is totally isolated by the government
+activeIsolation = True #Decide if a confirmed case is totally isolated by the government
 activeTracking = True #Decide if government track tested humans close contacts to test and isolate them.
-activeTrackingThreshold = 0.25 #The probability for government to recognize a closed contact.
+activeTrackingThreshold = 0.5 #The probability for government to recognize a closed contact.
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
-testingResponse = 0.5 #The probability for a symptomatic human of being tested by the government
-testingASResponse = 0.05 #The probability for a asymptomatic human of being tested by the government
+testingResponse = 0.1 #The probability for a symptomatic human of being tested by the government each day
+testingASResponse = 0.02 #The probability for a asymptomatic human of being tested by the government each day
 
 #Government countermeasures failure
 govFailure = False #To set a temporarily suspension of government measures
@@ -68,5 +68,5 @@ for i in range(simulationsCount):
 	vz.populationVisualization(simulationName)
 	govActionsCycles = sim.getGovActionsCycles()
 	psicosisCycles = sim.getPsicosisCycles()
-	vz.simulationVisualization(simulationName, runGovActions, govActionsCycles, psicosis, psicosisCycles)
+	vz.simulationVisualization(simulationName, runGovActions, govActionsCycles, psicosis, psicosisCycles, simulationsPopulation)
 	vz.infectionsVisualization(simulationName)
