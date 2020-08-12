@@ -23,7 +23,7 @@ class Human():
 		self.isIsolated = False
 		self.autoIsolation = False #If True, the human will isolate himself when the symptoms appear
 	
-		#Variables to managing the disease
+		#Variables to manage the disease
 		self.isInfected = False
 		self.willBeSymptomatic = False
 		self.isSymptomatic = False
@@ -35,6 +35,10 @@ class Human():
 		self.illnessPeriod = 0
 		self.evolutionState = 0
 		self.contagiousFactor = 0.15 #Probability of infect others depends on the presence of symptoms
+		
+		#Variables to manage post disease
+		self.hasImmunity = False
+		self.recoverDate = 0 #Day in which human's infection ended
 		
 		#Boolean to define if human was diagnosed
 		self.wasTested = False

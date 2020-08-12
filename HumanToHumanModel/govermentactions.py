@@ -6,11 +6,13 @@ startCaseCount = 0
 actionsPeriod = 0
 baseInfoFactor = 1.0
 baseIsolationFactor = 1.0
+baseExchangeFactor = 1.0
 baseSocialDistanceFactor = 1.0
 baseTestingThreshold = 0.5
 baseTestingASThreshold = 0.05
 currentInfoFactor = 1.0
 currentIsolationFactor = 1.0
+currentExchangeFactor = 1.0
 currentSocialDistanceFactor = 1.0
 testingResponseThreshold = 0.5
 testingResponseASThreshold = 0.05
@@ -108,15 +110,22 @@ class GovermentActions():
 		global currentIsolationFactor
 		currentIsolationFactor = factor
 	
-	def getSocialDistanceFactor():
-		return currentSocialDistanceFactor
+	def getIsolationFactor():
+		return currentIsolationFactor
 	
 	def setSocialDistanceFactor(factor):
 		global currentSocialDistanceFactor
 		currentSocialDistanceFactor = factor
 	
-	def getIsolationFactor():
-		return currentIsolationFactor
+	def getSocialDistanceFactor():
+		return currentSocialDistanceFactor
+	
+	def setExchangeFactor(factor):
+		global currentExchangeFactor
+		currentExchangeFactor = factor
+	
+	def getExchangeFactor():
+		return currentExchangeFactor
 	
 	def setLockDown(status):
 		global lockDown
@@ -183,6 +192,8 @@ class GovermentActions():
 		currentInfoFactor = baseInfoFactor
 		global currentIsolationFactor
 		currentIsolationFactor = baseIsolationFactor
+		global currentExchangeFactor
+		currentExchangeFactor = baseExchangeFactor
 		global currentSocialDistanceFactor
 		currentSocialDistanceFactor = baseSocialDistanceFactor
 		global lockDown
