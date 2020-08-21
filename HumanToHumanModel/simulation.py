@@ -49,6 +49,8 @@ BDeaths = 0
 BRecovered = 0
 infectedPopulationRatio = 0.0
 knownInfectedRatio = 0.0
+actualImmunity = 0
+immunityRatio = 0.0
 actualDeathRate = 0.0
 
 #Save simulation start time...
@@ -62,18 +64,19 @@ evolutionData = pd.DataFrame(columns=["Day", "Total infected", "Total tested", "
 									"Infected", "Actual tested", "In treatment",
 									"Infected in A", "Tested in A", "In treatment in A", "Deaths in A", "Recovered in A",
 									"Infected in B", "Tested in B", "In treatment in B", "Deaths in B", "Recovered in B",
-									"Known infected %", "Infected population %", "Death rate"])
+									"Known infected %", "Infected population %", "Population immunity %", "Death rate"])
 populationData = pd.DataFrame(columns=["Human number", "Age", "Sex", "Family number", "Careful factor", 
 									"Social distance", "Death risk"])
-virusData = pd.DataFrame(columns=["Human number", "Infection number", "Age", "Sex", "Death risk factor", "Is dead?",
+virusData = pd.DataFrame(columns=["Human number", "Infection number", "Infection date", "End date",
+									"Transmission", "Age", "Sex", "Death risk factor", "Is dead?",
 									"Incubation period", "Total illness period", "Is tested?", "Was tested?",
 									"Had symptoms?", "Was treated?"])
 
 class Simulation():
 	"Structuring one epidemic simulation"
 	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActions, \
-					govActionsList, govFailureList, autoIsolationThreshold, psicosisB, psicosisTrigger, \
-					psicosisOff, psicosisFactor):
+					govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, psicosisB, \
+					psicosisTrigger, psicosisOff, psicosisFactor):
 		
 		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()
@@ -81,9 +84,10 @@ class Simulation():
 		global simulationStartTime
 		simulationStartTime = tm.time() #To know how much time a simulation takes
 		
+		global population
+		population = populationcount
+
 		if simNumber == 1: #Some things will be the same in all iterations
-			global population
-			population = populationcount
 			global period
 			period = periodindays
 			global simulationName0
@@ -111,12 +115,24 @@ class Simulation():
 			rd.saveSimulationConfig(simulationName)
 			print("Starting point data saved!           ", end="\n")
 		
-		#Now we create the population that will suffer the outbreak.
-		Simulation.createHumans(population, casesCero, simulationName, autoIsolationThreshold)
+		#Now we create the population that will suffer the outbreak
+		Simulation.createHumans(population, casesCero, simulationName, autoIsolationThreshold, startingImmunity)
+		
+		#We inject desire number of infected humans in area A
+		print("Injecting infected human/s in urban area A...", end="\r")
+		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCero)
+		for i in range(casesCero):
+			Simulation.setInfection(areaAHumans[auxRandoms[i]], "A", 1)
+			if areaAHumans[auxRandoms[i]].hasImmunity == True:
+				areaAHumans[auxRandoms[i]].hasImmunity = False
+				Simulation.decreaseV("actualImmunity")
+		print("Infected human/s injected!                        ", end="\n")
+		dt.savePopulationData(areaAHumans, areaBHumans, simulationName)
+		print("", end="\n")
 
 		#Simulating each day, one by one...
 		for d in range(period):
-			print("Simulating day " + str(d) + "...		", end="\r")
+			print("Simulating day " + str(d + 1) + "...		", end="\r")
 			Simulation.simulateDay(d + 1)
 			Simulation.saveDay(d + 1)
 			if psicosisB == True:
@@ -126,16 +142,19 @@ class Simulation():
 			if d < period:
 				Simulation.humanExchange(areaAHumans, areaBHumans)
 			
-		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
-		virusData.to_csv("SimulationData/Infections/" + simulationName + "_infections.csv", index=False)
-		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsCycles, \
-			govActions, psicosisB, psicosisCycles)
-			
 		print("Simulation Complete!				", end="\n")
 		print("Infected: " + str(totalInfected) + ", Recovered: " + str(totalRecovered) + ", Deaths: " +
 				str(totalDeaths), end="\n")
 		print("Time needed for this simulation: " +
 				Simulation.getSimulationTime(simulationStartTime, tm.time()), end="\n")
+				
+		print("", end="\n")
+		print("Saving simulation's data...", end="\r")
+		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
+		virusData.to_csv("SimulationData/Infections/" + simulationName + "_infections.csv", index=False)
+		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsCycles, \
+			govActions, psicosisB, psicosisCycles)
+		print("Simulation's data saved!       ", end="\n")
 		
 	#####################################################################################################
 	#Simulating a day...
@@ -145,6 +164,7 @@ class Simulation():
 		Simulation.getDeathRate()
 		Simulation.getInfectedRatio()
 		Simulation.getKnownInfectedRatio()
+		Simulation.getImmunityRatio()
 		
 	def simulateAreaA(d):
 		infectedList = Simulation.getInfectedList(areaAHumans)
@@ -189,12 +209,14 @@ class Simulation():
 			s = rd.isDistancedAverage(infectedHuman, human) * gov.getSocialDistanceFactor()
 			infectionP = r * rd.getInfectionThresholdVar(c, s)
 			if infectionP < vr.getInfectionThreshold() *  infectedHuman.contagiousFactor:
-				Simulation.setInfection(human, area)
+				Simulation.setInfection(human, area, d)
+				infectedHuman.transmission += 1
 
 	#Method to make human infected
-	def setInfection(human, area):
+	def setInfection(human, area, d):
 		human.isInfected = True
 		human.infectionNumber += 1
+		human.infectionDate = d
 		human.isTested = False
 		illness = rd.setIllnessDevelopment()
 		human.incubationPeriod = illness
@@ -243,7 +265,7 @@ class Simulation():
 				if human.isSymptomatic == True:
 					if human.isInTreatment == True:
 						if Simulation.decideDeath(human) == True:
-							Simulation.killHuman(human, area)
+							Simulation.killHuman(human, area, d)
 						else:
 							Simulation.setCure(human, area, d)
 						Simulation.decreaseV("actualInTreatment")
@@ -324,11 +346,13 @@ class Simulation():
 		return death
 	
 	#Method for kill a human
-	def killHuman(human, area):
+	def killHuman(human, area, d):
 		humanNumber = human.humanNumber
+		human.endDate = d
 		hIndex = 0
 		Simulation.increaseV("totalDeaths")
 		Simulation.decreaseV("actualInfected")
+		Simulation.decreaseV("population")
 		Simulation.saveInfection(human, True)
 		if human.isTested == True:
 			Simulation.decreaseV("actualTested")
@@ -372,14 +396,16 @@ class Simulation():
 	#Method to set the cure
 	def setCure(human, area, d):
 		human.isInfected = False
+		human.endDate = d
 		Simulation.increaseV("totalRecovered")
 		Simulation.decreaseV("actualInfected")
 		Simulation.saveInfection(human, False)
 		human.hasImmunity = True
+		Simulation.increaseV("actualImmunity")
 		human.isSymptomatic = False
 		human.isInTreatment = False
 		human.isIsolated = False
-		human.recoverDate = d
+		human.transmission = 0
 		if human.isTested == True:
 			Simulation.decreaseV("actualTested")
 		if area == "A":
@@ -391,8 +417,9 @@ class Simulation():
 	
 	#Method to check if human has immunity
 	def checkImmunity(human, d, immunityPeriod):
-		if immunityPeriod < d - human.recoverDate:
+		if immunityPeriod < d - human.endDate:
 			human.hasImmunity = False 
+			Simulation.decreaseV("actualImmunity")
 	
 	#Setting humans exchange between urban areas
 	def humanExchange(areaAH, areaBH):
@@ -530,7 +557,7 @@ class Simulation():
 		
 	######################################################################################################
 	#Creating humans and simulation environment
-	def createHumans(population, casesCero, simulationName, autoIsolationThreshold):
+	def createHumans(population, casesCero, simulationName, autoIsolationThreshold, startingImmunity):
 		
 		#Humans initialization
 		humans = []
@@ -558,18 +585,16 @@ class Simulation():
 			auxRandom = rd.aRandom()
 			if auxRandom <= autoIsolationThreshold:
 				humans[p].autoIsolation = True
+				
+			auxRandom = rd.aRandom()
+			if auxRandom <= startingImmunity:
+				humans[p].hasImmunity = True
+				Simulation.increaseV("actualImmunity")
 			
-		print("Creating humans complete!		", end="\n")
-		
 		Simulation.assignFamilies(humans)
 		Simulation.assignAreas(humans)
 		
-		print("Injecting infected human/s in urban area A...", end="\r")
-		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCero)
-		for i in range(casesCero):
-			Simulation.setInfection(areaAHumans[auxRandoms[i]], "A")		
-		print("Infected human/s injected!                        ", end="\n")
-		dt.savePopulationData(areaAHumans, areaBHumans, simulationName)
+		print("Creating humans complete!		", end="\n")
 	
 	#Defining families for each human
 	def assignFamilies(humans):
@@ -642,6 +667,10 @@ class Simulation():
 		global knownInfectedRatio
 		knownInfectedRatio = actualTested / population
 		
+	def getImmunityRatio():
+		global immunityRatio
+		immunityRatio = actualImmunity / population
+	
 	def getDeathRate():
 		global actualDeathRate
 		actualDeathRate = totalDeaths / totalInfected
@@ -652,21 +681,24 @@ class Simulation():
 								actualInfected,	actualTested, actualInTreatment, actualIsolated, actualAInfected,
 								ATested, actualAInTreatment,	ADeaths, ARecovered, actualBInfected, BTested,
 								actualBInTreatment, BDeaths, BRecovered, round(knownInfectedRatio, 5),
-								round(infectedPopulationRatio, 5), round(actualDeathRate, 5)]],
+								round(infectedPopulationRatio, 5), round(immunityRatio, 5),
+								round(actualDeathRate, 5)]],
 								columns=["Day", "Total infected", "Total tested", "Total isolated", "Total deaths",
 									"Total recovered", "Infected", "Actual tested", "In treatment", "Isolated",
 									"Infected in A", "Tested in A", "In treatment in A", "Deaths in A",
 									"Recovered in A","Infected in B", "Tested in B", "In treatment in B",
 									"Deaths in B", "Recovered in B", "Known infected %", "Infected population %",
-									"Death rate"])
+									"Population immunity %", "Death rate"])
 		evolutionData = pd.concat([evolutionData, auxRow])
 
 	def saveInfection(human, isDead):
 		global virusData
-		auxRow = pd.DataFrame([[human.humanNumber, human.infectionNumber, human.age, human.sex, human.deathRiskFactor,
-								isDead,	human.incubationPeriod, human.illnessPeriod, human.isTested, human.wasTested,
+		auxRow = pd.DataFrame([[human.humanNumber, human.infectionNumber, human.infectionDate, human.endDate,
+								human.transmission, human.age, human.sex, human.deathRiskFactor, isDead,
+								human.incubationPeriod, human.illnessPeriod, human.isTested, human.wasTested,
 								human.willBeSymptomatic, human.willNeedTreatment]],
-								columns=["Human number", "Infection number", "Age", "Sex", "Death risk factor", "Is dead?",
+								columns=["Human number", "Infection number",  "Infection date", "End date",
+									"Transmission", "Age", "Sex", "Death risk factor", "Is dead?",
 									"Incubation period", "Total illness period", "Is tested?", "Was tested?",
 									"Had symptoms?", "Was treated?"])
 		virusData = pd.concat([virusData, auxRow])
@@ -772,6 +804,8 @@ class Simulation():
 		BDeaths = 0
 		global BRecovered
 		BRecovered = 0
+		global actualImmunity
+		actualImmunity = 0
 		global govActionsStartDay
 		govActionsStartDay = -1
 		global govActionsActive
@@ -783,6 +817,9 @@ class Simulation():
 
 	#Simple methods to increase or decrease global variables
 	def increaseV(vName):
+		if vName == "population":
+			global population
+			population += 1
 		if vName == "totalInfected":
 			global totalInfected
 			totalInfected += 1
@@ -840,8 +877,14 @@ class Simulation():
 		if vName == "BRecovered":
 			global BRecovered
 			BRecovered += 1
+		if vName == "actualImmunity":
+			global actualImmunity
+			actualImmunity += 1
 	
 	def decreaseV(vName):
+		if vName == "population":
+			global population
+			population -= 1
 		if vName == "totalInfected":
 			global totalInfected
 			totalInfected -= 1
@@ -899,3 +942,6 @@ class Simulation():
 		if vName == "BRecovered":
 			global BRecovered
 			BRecovered -= 1
+		if vName == "actualImmunity":
+			global actualImmunity
+			actualImmunity -= 1

@@ -1,8 +1,8 @@
 baseInfectionThreshold = 0.2 #How contagious the virus is
-baseASContagiousFactor = 0.2 #Contagious factor in absence of symptoms
+baseASContagiousFactor = 0.15 #Contagious factor in absence of symptoms
 baseSymptomsThreshold = 0.4 #Probability of having symptoms
 baseTreatmentThreshold = 0.2 #Probability of needing treatment
-immunityPeriod = 100 #Days of immunity after an infection
+immunityPeriod = 180 #Days of immunity after an infection
 contagiousShift = 0 #Days offset between mosto contagious face and symptoms
 baseDeathRate = 0.4 #Base death rate for patients who needed treatment
 deathRiskSymptomsWeight = 0.7 #The probability of been symptomatic is related to death risk

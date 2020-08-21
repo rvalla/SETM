@@ -18,8 +18,8 @@ factor_mode = 1.0
 
 #Limits for illness development
 illness_start = 2
-illness_end = 11
-illness_mode = 4.5
+illness_end = 10
+illness_mode = 4
 
 #Limits for triangular distribution for contacts
 contacts_start = 1

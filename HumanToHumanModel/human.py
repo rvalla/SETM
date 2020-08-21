@@ -38,7 +38,9 @@ class Human():
 		
 		#Variables to manage post disease
 		self.hasImmunity = False
-		self.recoverDate = 0 #Day in which human's infection ended
+		self.infectionDate = 0 #Day in which human's infection occur
+		self.endDate = 0 #Day in which human's infection ended
+		self.transmission = 0 #Number of other humans infected
 		
 		#Boolean to define if human was diagnosed
 		self.wasTested = False
