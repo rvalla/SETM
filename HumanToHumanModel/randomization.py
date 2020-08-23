@@ -23,7 +23,7 @@ illness_mode = 4
 
 #Limits for triangular distribution for contacts
 contacts_start = 1
-contacts_end = 6
+contacts_end = 8
 contacts_mode = 3
 
 #Limits for triangular distribution for human exchange between urban areas

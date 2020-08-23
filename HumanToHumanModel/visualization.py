@@ -19,7 +19,7 @@ widthBig = 2.5
 widthNormal = 2.0
 widthSmall = 1.5
 plotColors = ["orange", "tab:red", "tab:blue", "limegreen", "indianred", "teal", "darkslategray", \
-			"mediumseagreen", "orangered", "goldenrod"]
+			"mediumseagreen", "orangered", "goldenrod", "dimgrey", "whitesmoke"]
 paintColors = ["seagreen", "tab:red"]
 
 class Visualization():
@@ -104,7 +104,7 @@ class Visualization():
 		newcases = Visualization.getNewCases(auxlist)
 		newcasesav = Visualization.getNewCasesAv(newcases)
 		plt.plot(newcases, label="Daily count", linewidth=widthSmall, alpha=0.4, color=plotColors[6])
-		plt.plot(newcasesav, label="5 day average", linewidth=widthBig, color=plotColors[0])
+		plt.plot(newcasesav, label="7 day average", linewidth=widthBig, color=plotColors[0])
 		if govActions == True:
 			Visualization.paintGovActions(govActionsCycles)
 		if psicosis == True:
@@ -145,12 +145,12 @@ class Visualization():
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
 		figure.suptitle("Infections in " + simulationName, fontsize=13, fontname=defaultFont)
 		plt.subplot2grid((4, 4), (0, 0), colspan=2)
-		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=10, color=plotColors[2])
+		incubation = infectionsData["Incubation period"].plot(kind="hist", bins=8, color=plotColors[2])
 		incubation.set_title("Incubation periods distribution", fontsize=10, fontname=defaultFont)
 		incubation.set_ylabel("")
 		Visualization.background()
 		plt.subplot2grid((4, 4), (0, 2), colspan=2)
-		illness = infectionsData["Total illness period"].plot(kind="hist", bins=10, color=plotColors[2])
+		illness = infectionsData["Total illness period"].plot(kind="hist", bins=12, color=plotColors[2])
 		illness.set_title("Total illness periods distribution", fontsize=10, fontname=defaultFont)
 		illness.set_ylabel("")
 		Visualization.background()
@@ -162,7 +162,7 @@ class Visualization():
 		plt.subplot2grid((4, 4), (1, 1))
 		deaths = infectionsData["Is dead?"].value_counts().plot(kind="barh", color=plotColors[4])
 		deaths.set_ylabel("")
-		deaths.set_title("Has died?", fontsize=10, fontname=defaultFont)
+		deaths.set_title("Had died?", fontsize=10, fontname=defaultFont)
 		Visualization.background()
 		plt.subplot2grid((4, 4), (1, 2))
 		symptoms = infectionsData["Had symptoms?"].value_counts().plot(kind="barh", color=plotColors[9])
@@ -175,10 +175,15 @@ class Visualization():
 		treatment.set_title("Was treated?", fontsize=10, fontname=defaultFont)
 		Visualization.background()
 		plt.subplot2grid((4, 4), (2, 0), colspan=4, rowspan=2)
-		transmission = plt.scatter(infectionsData["End date"], infectionsData["Transmission"], color=plotColors[2], alpha=0.7)
-		transmission = plt.scatter(infectionsData["Infection date"], infectionsData["Transmission"], color=plotColors[4], alpha=0.7)
+		tSymptomatic = infectionsData[infectionsData["Had symptoms?"]==True]
+		tAsymptomatic = infectionsData[infectionsData["Had symptoms?"]==False]
+		transmission = plt.scatter(tAsymptomatic["Infection date"], tAsymptomatic["Transmission"], s=15, color=plotColors[11], alpha=0.5)
+		transmission = plt.scatter(tSymptomatic["Infection date"], tSymptomatic["Transmission"], s=20, color=plotColors[10], alpha=0.5)
+		transmission = plt.plot(tSymptomatic.groupby("Infection date")["Transmission"].mean(), linewidth=2.5, color=plotColors[4], alpha=1.0)
+		transmission = plt.plot(tAsymptomatic.groupby("Infection date")["Transmission"].mean(), linewidth=2.5, color=plotColors[2], alpha=1.0)
+		transmission = plt.plot(infectionsData.groupby("Infection date")["Transmission"].mean(), linestyle=":", linewidth=1.5, color=plotColors[10], alpha=1.0)
 		plt.ylabel("")
-		plt.title("Infected humans transmission (Infection date vs. End date)", fontsize=10, fontname=defaultFont)
+		plt.title("Infected humans transmission (symptomatic vs asymptomatic)", fontsize=10, fontname=defaultFont)
 		Visualization.background()
 		if govActions == True:
 			Visualization.paintGovActions(govActionsCycles)
@@ -236,9 +241,11 @@ class Visualization():
 		ls = []
 		ls.append(None)
 		ls.append(None)
-		for e in range(len(datalist) - 4):
-			ls.append((datalist[e+4] + datalist[e+3] + datalist[e+2] + datalist[e+1] + datalist[e])/5)
+		ls.append(None)
+		for e in range(len(datalist) - 6):
+			ls.append((datalist[e+6] + datalist[e+5] + datalist[e+4] + datalist[e+3] + datalist[e+2] + datalist[e+1] + datalist[e])/7)
 		index = len(datalist)
+		ls.append(None)
 		ls.append(None)
 		ls.append(None)
 		return ls

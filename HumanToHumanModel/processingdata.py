@@ -19,7 +19,7 @@ class ProcessingData():
 				str(human.contagiousFactor))
 				
 	def saveConfigStart(population, period, simulationName, govB, govActions, govFailure, \
-			autoIsolationThreshold, psicosisB, psicosisTrigger, psicosisOff, psicosisFactor):
+			autoIsolationThreshold, startingImmunity, psicosisB, psicosisTrigger, psicosisOff, psicosisFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		startConfig.write("#################################" + "\n")
 		startConfig.write("SIMPLE EPIDEMIC TRANSMISION MODEL" + "\n")
@@ -32,6 +32,7 @@ class ProcessingData():
 		startConfig.write("Population: " + str(population) + "\n")
 		startConfig.write("Period in days: " + str(period) + "\n")
 		startConfig.write("Humans auto isolation threshold: " + str(autoIsolationThreshold) + "\n")
+		startConfig.write("Population immunity when simulation starts: " + str(startingImmunity) + "%\n")
 		if psicosisB == True:
 			startConfig.write("Humans psicosis trigger threshold: " + str(psicosisTrigger) + "\n")
 			startConfig.write("Humans psicosis off threshold: " + str(psicosisTrigger) + "\n")
