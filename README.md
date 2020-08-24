@@ -10,4 +10,4 @@ In this case the virus can be transmitted from one human to another.
 This will be a simulation of a virus that is passed from one human to a mosquito and then
 to a human.
 
-Contact [rodrigovalla[at]yahoo.com.ar](mailto:rodrigovalla@yahoo.com.ar)
+Contact [rodrigovalla[at]protonmail.ch](mailto:rodrigovalla@protonmail.ch)

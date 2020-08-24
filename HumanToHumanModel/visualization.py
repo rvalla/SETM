@@ -140,7 +140,7 @@ class Visualization():
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png", facecolor=figure.get_facecolor())
 	
-	def infectionsVisualization(simulationName, govActions, govActionsCycles, psicosis, psicosisCycles):
+	def infectionsVisualization(simulationName, period, govActions, govActionsCycles, psicosis, psicosisCycles):
 		infectionsData = Visualization.loadFile(infectionsFile + ".csv")		
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
 		figure.suptitle("Infections in " + simulationName, fontsize=13, fontname=defaultFont)
@@ -177,11 +177,15 @@ class Visualization():
 		plt.subplot2grid((4, 4), (2, 0), colspan=4, rowspan=2)
 		tSymptomatic = infectionsData[infectionsData["Had symptoms?"]==True]
 		tAsymptomatic = infectionsData[infectionsData["Had symptoms?"]==False]
-		transmission = plt.scatter(tAsymptomatic["Infection date"], tAsymptomatic["Transmission"], s=15, color=plotColors[11], alpha=0.5)
-		transmission = plt.scatter(tSymptomatic["Infection date"], tSymptomatic["Transmission"], s=20, color=plotColors[10], alpha=0.5)
-		transmission = plt.plot(tSymptomatic.groupby("Infection date")["Transmission"].mean(), linewidth=2.5, color=plotColors[4], alpha=1.0)
-		transmission = plt.plot(tAsymptomatic.groupby("Infection date")["Transmission"].mean(), linewidth=2.5, color=plotColors[2], alpha=1.0)
-		transmission = plt.plot(infectionsData.groupby("Infection date")["Transmission"].mean(), linestyle=":", linewidth=1.5, color=plotColors[10], alpha=1.0)
+		transmission = plt.scatter(tAsymptomatic["Infection date"], tAsymptomatic["Transmission"], s=15, \
+						color=plotColors[11], alpha=0.5)
+		transmission = plt.scatter(tSymptomatic["Infection date"], tSymptomatic["Transmission"], s=20, \
+						color=plotColors[10], alpha=0.5)
+		transmissionAv = Visualization.getTransmissionAv(infectionsData, tSymptomatic, tAsymptomatic, period)
+		transmission = plt.plot(transmissionAv["Symptomatic"], linewidth=2.5, color=plotColors[4], alpha=1.0)
+		transmission = plt.plot(transmissionAv["Asymptomatic"], linewidth=2.5, color=plotColors[2], alpha=1.0)
+		transmission = plt.plot(transmissionAv["Total"], linestyle=":", linewidth=1.5, color=plotColors[10], alpha=1.0)
+		plt.xlim(1,period)
 		plt.ylabel("")
 		plt.title("Infected humans transmission (symptomatic vs asymptomatic)", fontsize=10, fontname=defaultFont)
 		Visualization.background()
@@ -249,3 +253,10 @@ class Visualization():
 		ls.append(None)
 		ls.append(None)
 		return ls
+	
+	def getTransmissionAv(iData, symptomatic, asymptomatic, period):
+		transmissionAv = pd.DataFrame(index=range(1,period+1), columns=["Symptomatic", "Asymptomatic", "Total"])
+		transmissionAv["Total"] = iData.groupby(by="Infection date")["Transmission"].mean()
+		transmissionAv["Symptomatic"] = symptomatic.groupby(by="Infection date")["Transmission"].mean()
+		transmissionAv["Asymptomatic"] = asymptomatic.groupby(by="Infection date")["Transmission"].mean()
+		return transmissionAv

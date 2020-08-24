@@ -9,7 +9,7 @@ simulationsCount = 1
 simulationsName = "saraza"
 
 #How many infected humans will be injected in urban area A
-casesCeroCount = 3
+casesCeroCount = 5
 
 #Human autoisolation threshold [0;1]
 autoIsolationThreshold = 0.0 #The probability of a human will auto-isolate himself when having symptoms
@@ -29,8 +29,8 @@ infoFactor = 1.3 #Value to represent government awareness campaigns
 socialDistanceFactor = 1.5 #Value to represent control of social distance
 isolationFactor = 2.0 #Value to reduce number of human contacts
 exchangeFactor = 2.5 #Value to reduce human interchange between urban areas
-activeIsolation = True #Decide if a confirmed case is totally isolated by the government
-activeTracking = True #Decide if government track tested humans close contacts to test and isolate them.
+activeIsolation = False #Decide if a confirmed case is totally isolated by the government
+activeTracking = False #Decide if government track tested humans close contacts to test and isolate them.
 activeTrackingThreshold = 0.3 #The probability for government to recognize a closed contact.
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
 testingResponse = 0.056 #The probability for a symptomatic human of being tested by the government each day
@@ -74,6 +74,6 @@ for i in range(simulationsCount):
 	psicosisCycles = sim.getPsicosisCycles()
 	print("Building data visualization...", end="\r")
 	vz.simulationVisualization(simulationName, runGovActions, govActionsCycles, psicosis, psicosisCycles, simulationsPopulation)
-	vz.infectionsVisualization(simulationName, runGovActions, govActionsCycles, psicosis, psicosisCycles)
+	vz.infectionsVisualization(simulationName, simulationsPeriod, runGovActions, govActionsCycles, psicosis, psicosisCycles)
 	print("Data visualization complete!     ", end="\n")
 	print("", end="\n")

@@ -49,4 +49,4 @@ Some code to process and save the data correctly.
 #### visualization.py
 Some code to plot results automatically.
 
-Contact [rodrigovalla[at]yahoo.com.ar](mailto:rodrigovalla@yahoo.com.ar)
+Contact [rodrigovalla[at]protonmail.ch](mailto:rodrigovalla@protonmail.ch)
