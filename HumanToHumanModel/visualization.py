@@ -185,7 +185,7 @@ class Visualization():
 		transmission = plt.plot(transmissionAv["Symptomatic (5d)"], linewidth=2.5, color=plotColors[4], alpha=1.0, label="Symptomatic (5d)")
 		transmission = plt.plot(transmissionAv["Asymptomatic (5d)"], linewidth=2.5, color=plotColors[2], alpha=1.0, label="Asymptomatic (5d)")
 		transmission = plt.plot(transmissionAv["Total (5d)"], linestyle=":", linewidth=1.5, color=plotColors[10], alpha=1.0, label="Total (5d)")
-		plt.legend(loc=0, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
+		plt.legend(loc=1, shadow = True, facecolor = backgroundFigure, prop={'family' : legendFont, 'size' : 8})
 		plt.xlim(1,period)
 		plt.ylabel("")
 		plt.title("Infected humans transmission (symptomatic vs asymptomatic)", fontsize=10, fontname=defaultFont)

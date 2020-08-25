@@ -6,7 +6,7 @@ from processingdata import ProcessingData as dt
 simulationsPeriod = 360
 simulationsPopulation = 3000 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 3
-simulationsName = "25082020_3k_360d_Basal_45y"
+simulationsName = "25082020_3k_360d_75dIB"
 casesCeroCount = 3 #How many infected humans will be injected in urban area A
 startingImmunity = 0.0 #The proportion of the population which has immunity before the outbreak
 
