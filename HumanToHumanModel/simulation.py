@@ -733,12 +733,14 @@ class Simulation():
 		areaBHumans.clear()
 		Simulation.restartV()
 		print("Humans from previous population deleted!        ", end="\n")
-		print("Erasing previous simulation data...", end="\r")
+		print("Erasing outbreak evolution data...", end="\r")
 		global evolutionData
-		evolutionData.drop(evolutionData.index, inplace=True)
+		evolutionData = pd.DataFrame(columns=evolutionData.columns)
+		print("Outbreak evolution data erased!      ", end="\n")
+		print("Erasing infections data...", end="\r")
 		global virusData
-		virusData.drop(virusData.index, inplace=True)
-		print("Previous simulation data erased!             ", end="\n")
+		virusData = pd.DataFrame(columns=virusData.columns)
+		print("Infections data erased!             ", end="\n")
 	
 	#Calculating time needed for simulation to finish...
 	def getSimulationTime(startTime, endTime):

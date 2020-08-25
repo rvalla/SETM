@@ -3,10 +3,10 @@ from visualization import Visualization as vz
 from processingdata import ProcessingData as dt
 
 #General simulation configuration
-simulationsPeriod = 360
+simulationsPeriod = 200
 simulationsPopulation = 3000 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 3
-simulationsName = "25082020_3k_360d_75dIB"
+simulationsName = ""
 casesCeroCount = 3 #How many infected humans will be injected in urban area A
 startingImmunity = 0.0 #The proportion of the population which has immunity before the outbreak
 
