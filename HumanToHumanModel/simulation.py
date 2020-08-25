@@ -1,6 +1,6 @@
 from human import Human as hn
 from randomization import Randomization as rd
-from govermentactions import GovermentActions as gov
+from governmentactions import GovernmentActions as gov
 from processingdata import ProcessingData as dt
 from virus import Virus as vr
 import pandas as pd
@@ -9,8 +9,8 @@ import time as tm
 #General data
 population = 0
 period = 0
-psicosis = False
-psicosisCycles = []
+behavior = False
+behaviorCycles = []
 
 #Representing two separate urban areas
 areaAHumans = []
@@ -75,8 +75,8 @@ virusData = pd.DataFrame(columns=["Human number", "Infection number", "Infection
 class Simulation():
 	"Structuring one epidemic simulation"
 	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActions, \
-					govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, psicosisB, \
-					psicosisTrigger, psicosisOff, psicosisFactor):
+					govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, behaviorB, \
+					behaviorTrigger, behaviorOff, behaviorFactor):
 		
 		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()
@@ -100,11 +100,12 @@ class Simulation():
 			gov.setAutoActionsOff(govActionsList[2])
 			gov.setStartCaseCount(govActionsList[3])
 			gov.setActionsPeriod(govActionsList[4])
-			gov.setActiveIsolation(govActionsList[9])
-			gov.setActiveTracking(govActionsList[10])
-			gov.setActiveTrackingThreshold(govActionsList[11])
-			gov.setTestingResponseThreshold(govActionsList[13])
-			gov.setTestingResponseASThreshold(govActionsList[14])
+			gov.setActiveIsolation(govActionsList[10])
+			gov.setActiveTracking(govActionsList[11])
+			gov.setActiveTrackingThreshold(govActionsList[12])
+			gov.setActiveTrackingPressureW(govActionsList[13])
+			gov.setTestingResponseThreshold(govActionsList[14])
+			gov.setTestingResponseASThreshold(govActionsList[15])
 			global govFailure
 			govFailure = govFailureList[0]
 			global govActionsFailurePeriod
@@ -135,10 +136,10 @@ class Simulation():
 			print("Simulating day " + str(d + 1) + "...		", end="\r")
 			Simulation.simulateDay(d + 1)
 			Simulation.saveDay(d + 1)
-			if psicosisB == True:
-				Simulation.checkHumansPsicosis(d, psicosisTrigger, psicosisOff, psicosisFactor)
+			if behaviorB == True:
+				Simulation.checkHumansBehavior(d, behaviorTrigger, behaviorOff, behaviorFactor)
 			if govActions == True:
-				Simulation.checkGovermentActions(d, govActionsList, govFailureList)
+				Simulation.checkGovActions(d, govActionsList, govFailureList)
 			if d < period:
 				Simulation.humanExchange(areaAHumans, areaBHumans)
 			
@@ -153,7 +154,7 @@ class Simulation():
 		evolutionData.to_csv("SimulationData/Simulations/" + simulationName + ".csv", index=False)
 		virusData.to_csv("SimulationData/Infections/" + simulationName + "_infections.csv", index=False)
 		Simulation.saveSimulationConfig(simulationName0, simNumber, casesCero, govActionsCycles, \
-			govActions, psicosisB, psicosisCycles)
+			govActions, behaviorB, behaviorCycles)
 		print("Simulation's data saved!       ", end="\n")
 		
 	#####################################################################################################
@@ -226,10 +227,13 @@ class Simulation():
 		
 		#Defining if infected humans will be symptomatic or will need treatment
 		auxRandom = rd.aRandom()
-		if auxRandom < vr.getSymptomsThreshold() * human.deathRiskFactor * vr.getDeathRiskSymptomsW():
+		symptomsThreshold = vr.getSymptomsThreshold() * human.deathRiskFactor * vr.getDeathRiskSymptomsW()
+		treatmentThreshold = vr.getTreatmentThreshold() * human.deathRiskFactor * vr.getDeathRiskTreatmentW()
+		reinfectionFactor = vr.getReinfectionFactor(human.infectionNumber)
+		if auxRandom < symptomsThreshold * reinfectionFactor:
 			human.willBeSymptomatic = True
 			auxRandom = rd.aRandom()
-			if auxRandom < vr.getTreatmentThreshold() * human.deathRiskFactor * vr.getDeathRiskTreatmentW():
+			if auxRandom < treatmentThreshold * reinfectionFactor:
 				human.willNeedTreatment = True
 		
 		Simulation.increaseV("totalInfected")
@@ -249,12 +253,11 @@ class Simulation():
 
 		#Illness evolution...		
 		if human.willBeSymptomatic == True:
-			if human.evolutionState == human.incubationPeriod: #and human.evolutionState < human.illnessPeriod:
+			if human.evolutionState == human.incubationPeriod:
 				human.isSymptomatic = True
 				if human.autoIsolation == True: #Humans can isolate themselves
 						human.isIsolated = True
 				if human.willNeedTreatment == True:
-					#if human.isInTreatment == False:
 					human.isInTreatment = True
 					Simulation.increaseV("actualInTreatment")
 					if area == "A":
@@ -322,7 +325,7 @@ class Simulation():
 			Simulation.lookForContact(family[f], area)
 		for c in contacts:
 			r = rd.aRandom()
-			if r < gov.getActiveTrackingThreshold():
+			if r < gov.getActiveTrackingThreshold(infectedPopulationRatio):
 				if c in humansInA:
 					Simulation.lookForContact(c, "A")
 				elif c in humansInB:
@@ -403,7 +406,9 @@ class Simulation():
 		human.hasImmunity = True
 		Simulation.increaseV("actualImmunity")
 		human.isSymptomatic = False
+		human.willBeSymptomatic = False
 		human.isInTreatment = False
+		human.willNeedTreatment = False
 		human.isIsolated = False
 		human.transmission = 0
 		if human.isTested == True:
@@ -418,8 +423,9 @@ class Simulation():
 	#Method to check if human has immunity
 	def checkImmunity(human, d, immunityPeriod):
 		if immunityPeriod < d - human.endDate:
-			human.hasImmunity = False 
-			Simulation.decreaseV("actualImmunity")
+			if human.hasImmunity == True:
+				human.hasImmunity = False 
+				Simulation.decreaseV("actualImmunity")
 	
 	#Setting humans exchange between urban areas
 	def humanExchange(areaAH, areaBH):
@@ -475,7 +481,7 @@ class Simulation():
 				inTreatment = True
 		return inTreatment
 		
-	def checkGovermentActions(actualDay, govActionsList, govFaiLureList):
+	def checkGovActions(actualDay, govActionsList, govFaiLureList):
 		if govMode == "normal":
 			Simulation.checkNormalGovActions(actualDay, govActionsList, govFaiLureList)
 		elif govMode == "auto":
@@ -520,40 +526,40 @@ class Simulation():
 		gov.setSocialDistanceFactor(govActionsList[6])
 		gov.setIsolationFactor(govActionsList[7])
 		gov.setExchangeFactor(govActionsList[8])
-		gov.setLockDown(govActionsList[12])
+		gov.setLockDown(govActionsList[9])
 		global govActionsCycles
 		govActionsCycles.append(actualDay)
 	
-	def checkHumansPsicosis(d, psicosisTrigger, psicosisOff, psicosisFactor):
-		global psicosis
-		if knownInfectedRatio > psicosisTrigger:
-			if psicosis == False:
-				Simulation.improveHumans(areaAHumans, areaBHumans, d, psicosisFactor)
-				psicosis = True
-		elif knownInfectedRatio <= psicosisOff:
-			if psicosis == True:
-				Simulation.resetHumansImprovement(areaAHumans, areaBHumans, d, psicosisFactor)
-				psicosis = False
+	def checkHumansBehavior(d, behaviorTrigger, behaviorOff, behaviorFactor):
+		global behavior
+		if knownInfectedRatio > behaviorTrigger:
+			if behavior == False:
+				Simulation.improveHumans(areaAHumans, areaBHumans, d, behaviorFactor)
+				behavior = True
+		elif knownInfectedRatio <= behaviorOff:
+			if behavior == True:
+				Simulation.resetHumansImprovement(areaAHumans, areaBHumans, d, behaviorFactor)
+				behavior = False
 	
-	def improveHumans(areaAHumans, areaBHumans, d, psicosisFactor):
+	def improveHumans(areaAHumans, areaBHumans, d, behaviorFactor):
 		for h in range(len(areaAHumans)):
-			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor * psicosisFactor
-			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor * psicosisFactor
+			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor * behaviorFactor
+			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor * behaviorFactor
 		for h in range(len(areaBHumans)):
-			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor * psicosisFactor
-			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor * psicosisFactor
-		global psicosisCycles
-		psicosisCycles.append(d)
+			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor * behaviorFactor
+			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor * behaviorFactor
+		global behaviorCycles
+		behaviorCycles.append(d)
 		
-	def resetHumansImprovement(areaAHumans, areaBHumans, d, psicosisFactor):
+	def resetHumansImprovement(areaAHumans, areaBHumans, d, behaviorFactor):
 		for h in range(len(areaAHumans)):
-			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor / psicosisFactor
-			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor / psicosisFactor
+			areaAHumans[h].carefulFactor = areaAHumans[h].carefulFactor / behaviorFactor
+			areaAHumans[h].socialDistanceFactor = areaAHumans[h].socialDistanceFactor / behaviorFactor
 		for h in range(len(areaBHumans)):
-			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor / psicosisFactor
-			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor / psicosisFactor
-		global psicosisCycles
-		psicosisCycles.append(d)
+			areaBHumans[h].carefulFactor = areaBHumans[h].carefulFactor / behaviorFactor
+			areaBHumans[h].socialDistanceFactor = areaBHumans[h].socialDistanceFactor / behaviorFactor
+		global behaviorCycles
+		behaviorCycles.append(d)
 		
 	######################################################################################################
 	#Creating humans and simulation environment
@@ -703,7 +709,7 @@ class Simulation():
 									"Had symptoms?", "Was treated?"])
 		virusData = pd.concat([virusData, auxRow])
 	
-	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsC, govActions, psicosisB, psicosisC):
+	def saveSimulationConfig(simulationName, sinNumber, casesCero, govActionsC, govActions, behaviorB, behaviorC):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		if sinNumber == 1:
 			startConfig.write("----Simulation start" + "\n")
@@ -717,8 +723,8 @@ class Simulation():
 				startConfig.write(str(sinNumber) + ". Government actions never started." + "\n")
 			else:
 				startConfig.write(str(sinNumber) + ". Government actions cycles: " + str(govActionsC) + "\n")
-		if psicosisB == True:
-			startConfig.write(str(sinNumber) + ". Population psicosis cycles: " + str(psicosisC) + "\n")
+		if behaviorB == True:
+			startConfig.write(str(sinNumber) + ". Population behavior cycles: " + str(behaviorC) + "\n")
 
 	#Deleting data and humans to run a new simulation
 	def deleteSimulation():
@@ -757,12 +763,12 @@ class Simulation():
 			govActionsCycles.append(period)
 		return govActionsCycles
 	
-	def getPsicosisCycles():
-		global psicosisCycles
-		length = len(psicosisCycles)
+	def getBehaviorCycles():
+		global behaviorCycles
+		length = len(behaviorCycles)
 		if length % 2 != 0:
-			psicosisCycles.append(period)
-		return psicosisCycles
+			behaviorCycles.append(period)
+		return behaviorCycles
 	
 	#Restarting variables in case another simulation is needed...
 	def restartV():

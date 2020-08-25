@@ -19,7 +19,7 @@ class ProcessingData():
 				str(human.contagiousFactor))
 				
 	def saveConfigStart(population, period, simulationName, govB, govActions, govFailure, \
-			autoIsolationThreshold, startingImmunity, psicosisB, psicosisTrigger, psicosisOff, psicosisFactor):
+			autoIsolationThreshold, startingImmunity, behaviorB, behaviorTrigger, behaviorOff, behaviorFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		startConfig.write("#################################" + "\n")
 		startConfig.write("SIMPLE EPIDEMIC TRANSMISION MODEL" + "\n")
@@ -33,10 +33,10 @@ class ProcessingData():
 		startConfig.write("Period in days: " + str(period) + "\n")
 		startConfig.write("Humans auto isolation threshold: " + str(autoIsolationThreshold) + "\n")
 		startConfig.write("Population immunity when simulation starts: " + str(startingImmunity) + "%\n")
-		if psicosisB == True:
-			startConfig.write("Humans psicosis trigger threshold: " + str(psicosisTrigger) + "\n")
-			startConfig.write("Humans psicosis off threshold: " + str(psicosisTrigger) + "\n")
-			startConfig.write("Humans psicosis factor: " + str(psicosisFactor) + "\n")
+		if behaviorB == True:
+			startConfig.write("Humans behavior trigger threshold: " + str(behaviorTrigger) + "\n")
+			startConfig.write("Humans behavior off threshold: " + str(behaviorOff) + "\n")
+			startConfig.write("Humans behavior improvement factor: " + str(behaviorFactor) + "\n")
 		startConfig.write("" + "\n")
 		if govB == True:
 			startConfig.write("----Government actions" + "\n")
@@ -44,7 +44,7 @@ class ProcessingData():
 				startConfig.write("Government actions mode: normal" + "\n")
 				startConfig.write("startCaseCount: " + str(govActions[3]) + "\n")
 				startConfig.write("actionsPeriod: " + str(govActions[4]) + "\n")
-				if govActions[9] == True:
+				if govFailure[0] == True:
 					startConfig.write("Government failure moment: " + str(govFailure[1]) + "\n")
 					startConfig.write("Government failure period: " + str(govFailure[2]) + "\n")
 			if govActions[0] == "auto":
@@ -54,12 +54,8 @@ class ProcessingData():
 			startConfig.write("infoFactor: " + str(govActions[5]) + "\n")
 			startConfig.write("socialDistanceFactor: " + str(govActions[6]) + "\n")
 			startConfig.write("isolationFactor: " + str(govActions[7]) + "\n")
-			startConfig.write("activeIsolation: " + str(govActions[8]) + "\n")
-			startConfig.write("activeTracking: " + str(govActions[9]) + "\n")
-			startConfig.write("activeTrackingThreshold: " + str(govActions[10]) + "\n")
-			startConfig.write("lockDown: " + str(govActions[11]) + "\n")
-			startConfig.write("testingResponseFactor: " + str(govActions[12]) + "\n")
-			startConfig.write("testingResponseASFactor: " + str(govActions[13]) + "\n")
+			startConfig.write("exchangeFactor: " + str(govActions[8]) + "\n")
+			startConfig.write("lockDown: " + str(govActions[9]) + "\n")
 			startConfig.write("" + "\n")
 		startConfig.close()
 	

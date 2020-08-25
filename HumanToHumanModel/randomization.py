@@ -4,7 +4,7 @@ import random as random
 #About population age triangular distribution
 population_age_start = 0
 population_age_end = 100
-population_age_mode = 26
+population_age_mode = 50
 
 #About family size triangular distribution
 family_size_start = 1

@@ -1,4 +1,4 @@
-"Store values to simulate goverment countermeasures"
+"Variables to control government default response and simulate countermeasures"
 actionsMode = "manual"
 autoActionsTrigger = 1.0
 autoActionsOff = 0.0
@@ -8,8 +8,6 @@ baseInfoFactor = 1.0
 baseIsolationFactor = 1.0
 baseExchangeFactor = 1.0
 baseSocialDistanceFactor = 1.0
-baseTestingThreshold = 0.5
-baseTestingASThreshold = 0.05
 currentInfoFactor = 1.0
 currentIsolationFactor = 1.0
 currentExchangeFactor = 1.0
@@ -19,6 +17,7 @@ testingResponseASThreshold = 0.05
 activeIsolation = False #Determine if the government strictly isolate confirmed cases
 activeTracking = False #Determine if the government isolate infected human's closed contacts
 activeTrackingThreshold = 0.0 #The probability of isolating a infected human's closed contact
+activeTrackingPressureW = 0.5 #Control How the population infected ratio affects active tracking
 lockDown = False
 colapseStart = 0.001 #Start age to calculate death risk factor function
 colapseEnd = 0.1 #End age to calculate death risk factor function
@@ -30,7 +29,7 @@ polynomialColapseA = 0
 polynomialColapseB = 0
 polynomialColapseC = 0
 
-class GovermentActions():
+class GovernmentActions():
 	
 	#Function to return death risk increase factor due to possible medical system colapse
 	def treatmentColapseFactor(infectedPopulationRatio, type):
@@ -152,8 +151,16 @@ class GovermentActions():
 		global activeTrackingThreshold
 		activeTrackingThreshold = threshold
 	
-	def getActiveTrackingThreshold():
-		return activeTrackingThreshold
+	def getActiveTrackingThreshold(ipRatio):
+		threshold = activeTrackingThreshold * (1 - (ipRatio * activeTrackingPressureW))
+		return threshold
+	
+	def setActiveTrackingPressureW(weight):
+		global activeTrackingPressureW
+		activeTrackingPressureW = weight
+	
+	def getActiveTrackingPressureW():
+		return activeTrackingPressureW
 	
 	def setTestingResponseThreshold(threshold):
 		global testingResponseThreshold
@@ -172,13 +179,17 @@ class GovermentActions():
 	#Method to save inicial data to text file
 	def saveSimulationConfig(simulationName):
 		govConfig = open("SimulationData/" + simulationName + ".txt", "a")
-		govConfig.write("----Goverment base state" + "\n")
+		govConfig.write("----Government base state" + "\n")
 		govConfig.write("Base info factor: " + str(baseInfoFactor) + "\n")
 		govConfig.write("Base isolation factor: " + str(baseIsolationFactor) + "\n")
 		govConfig.write("Base social distance factor: " + str(baseSocialDistanceFactor) + "\n")
-		govConfig.write("Base testing threshold: " + str(baseTestingThreshold) + "\n")
-		govConfig.write("Base testing asymptomatic threshold: " + str(baseTestingASThreshold) + "\n")
+		govConfig.write("Testing response threshold: " + str(testingResponseThreshold) + "\n")
+		govConfig.write("Testing response threshold (asymptomatic humans): " + str(testingResponseASThreshold) + "\n")
 		govConfig.write("Active isolation: " + str(activeIsolation) + "\n")
+		govConfig.write("Active tracking: " + str(activeTracking) + "\n")
+		if activeTracking == True:
+			govConfig.write("Active tracking threshold: " + str(activeTrackingThreshold) + "\n")
+			govConfig.write("Active tracking pressure weight: " + str(activeTrackingPressureW) + "\n")
 		govConfig.write("Health system colapse start: " + str(colapseStart) + "\n")
 		govConfig.write("Health system colapse end: " + str(colapseEnd) + "\n")
 		govConfig.write("Health system colapse factor start: " + str(colapseFactorStart) + "\n")
