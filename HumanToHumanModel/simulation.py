@@ -9,6 +9,7 @@ import time as tm
 #General data
 population = 0
 period = 0
+areaBDensity = 1.0
 behavior = False
 behaviorCycles = []
 
@@ -74,9 +75,9 @@ virusData = pd.DataFrame(columns=["Human number", "Infection number", "Infection
 
 class Simulation():
 	"Structuring one epidemic simulation"
-	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, govActions, \
-					govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, behaviorB, \
-					behaviorTrigger, behaviorOff, behaviorFactor):
+	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, bDensity, \
+					govActions, govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, \
+					behaviorB, behaviorTrigger, behaviorOff, behaviorFactor):
 		
 		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()
@@ -92,6 +93,8 @@ class Simulation():
 			period = periodindays
 			global simulationName0
 			simulationName0 = simulationName
+			global areaBDensity
+			areaBDensity = bDensity
 			global govMode
 			govMode = govActionsList[0]
 			vr.startRiskVariables()
@@ -120,14 +123,14 @@ class Simulation():
 		Simulation.createHumans(population, casesCero, simulationName, autoIsolationThreshold, startingImmunity)
 		
 		#We inject desire number of infected humans in area A
-		print("Injecting infected human/s in urban area A...", end="\r")
+		print("Injecting infected humans in urban area A...", end="\r")
 		auxRandoms = rd.aRandomIntList(0, len(areaAHumans) - 1, casesCero)
 		for i in range(casesCero):
 			Simulation.setInfection(areaAHumans[auxRandoms[i]], "A", 1)
 			if areaAHumans[auxRandoms[i]].hasImmunity == True:
 				areaAHumans[auxRandoms[i]].hasImmunity = False
 				Simulation.decreaseV("actualImmunity")
-		print("Infected human/s injected!                        ", end="\n")
+		print("Infected humans injected!                        ", end="\n")
 		dt.savePopulationData(areaAHumans, areaBHumans, simulationName)
 		print("", end="\n")
 
@@ -172,7 +175,7 @@ class Simulation():
 		for i in range(len(infectedList)):
 			hIndex = Simulation.getHumanIndex(areaAHumans, infectedList[i])
 			if areaAHumans[hIndex].isIsolated == False:
-				areaAHumans[hIndex].contacts = Simulation.setHumanContacts(areaAHumans)
+				areaAHumans[hIndex].contacts = Simulation.setHumanContacts(areaAHumans, 1.0)
 				for f in range (len(areaAHumans[hIndex].family)):
 					indexF = Simulation.getHumanIndex(areaAHumans, areaAHumans[hIndex].family[f])
 					if areaAHumans[indexF].isInfected == False:
@@ -189,7 +192,7 @@ class Simulation():
 		for i in range(len(infectedList)):
 			hIndex = Simulation.getHumanIndex(areaBHumans, infectedList[i])
 			if areaBHumans[hIndex].isIsolated == False:
-				areaBHumans[hIndex].contacts = Simulation.setHumanContacts(areaBHumans)
+				areaBHumans[hIndex].contacts = Simulation.setHumanContacts(areaBHumans, areaBDensity)
 				for f in range (len(areaBHumans[hIndex].family)):
 					indexF = Simulation.getHumanIndex(areaBHumans, areaBHumans[hIndex].family[f])
 					if areaBHumans[indexF].isInfected == False:
@@ -387,11 +390,11 @@ class Simulation():
 					break
 	
 	#Set contacts list for infected humans
-	def setHumanContacts(humans):
+	def setHumanContacts(humans, density):
 		contacts = []
-		count = rd.setContactsCount(gov.getIsolationFactor())
-		if count > 0:
-			auxRandoms = rd.aRandomIntList(0, len(humans) - 1, int(count))
+		quantity = rd.setContactsQuantity(gov.getIsolationFactor(), density)
+		if quantity > 0:
+			auxRandoms = rd.aRandomIntList(0, len(humans) - 1, int(quantity))
 			for i in range(len(auxRandoms)):
 				contacts.append(Simulation.getHumanNumber(humans, auxRandoms[i]))
 		return contacts

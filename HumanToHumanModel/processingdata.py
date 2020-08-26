@@ -18,7 +18,7 @@ class ProcessingData():
 		print("-- Is symptomatic: " + str(human.isSymptomatic) + ", Contagious factor: " +
 				str(human.contagiousFactor))
 				
-	def saveConfigStart(population, period, simulationName, govB, govActions, govFailure, \
+	def saveConfigStart(population, period, simulationName, areaBDensity, govB, govActions, govFailure, \
 			autoIsolationThreshold, startingImmunity, behaviorB, behaviorTrigger, behaviorOff, behaviorFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")
 		startConfig.write("#################################" + "\n")
@@ -31,6 +31,7 @@ class ProcessingData():
 		startConfig.write(simulationName + "\n")
 		startConfig.write("Population: " + str(population) + "\n")
 		startConfig.write("Period in days: " + str(period) + "\n")
+		startConfig.write("Area B population density (relative to area A): " + str(areaBDensity) + "\n")
 		startConfig.write("Humans auto isolation threshold: " + str(autoIsolationThreshold) + "\n")
 		startConfig.write("Population immunity when simulation starts: " + str(startingImmunity) + "%\n")
 		if behaviorB == True:

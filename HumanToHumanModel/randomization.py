@@ -84,9 +84,9 @@ class Randomization():
 		i = random.triangular(illness_start, illness_end, illness_mode)
 		return(round(i, 0))
 	
-	def setContactsCount(govIsolationFactor):
+	def setContactsQuantity(govIsolationFactor, density):
 		c = random.triangular(contacts_start, contacts_end, contacts_mode)
-		c = c / govIsolationFactor
+		c = c / govIsolationFactor * density
 		return(int(c))
 	
 	def setExchangeCount(govIsolationFactor):

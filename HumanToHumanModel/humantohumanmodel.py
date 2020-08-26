@@ -3,11 +3,12 @@ from visualization import Visualization as vz
 from processingdata import ProcessingData as dt
 
 #General simulation configuration
-simulationsPeriod = 200
+simulationsPeriod = 360
 simulationsPopulation = 3000 #Recommendation: Population > 500 to prevent randomization errors.
-simulationsCount = 3
+simulationsCount = 2
 simulationsName = ""
-casesCeroCount = 3 #How many infected humans will be injected in urban area A
+casesCeroCount = 5 #How many infected humans will be injected in urban area A
+areaBDensity = 1.0 #Population density in area B (relative to area A)
 startingImmunity = 0.0 #The proportion of the population which has immunity before the outbreak
 
 #Control of population behavior in response to the outbreak
@@ -15,7 +16,7 @@ autoIsolationThreshold = 0.0 #The probability of a human will auto-isolate himse
 behavior = False #Deciding if the outbreak will change humans behavior
 behaviorTrigger = 0.02 #Infected population percentage threshold which trigger behavior factor
 behaviorOff = 0.01 #Infected population percentage threshold which deactivates behavior factor
-behaviorFactor = 1.2 #Improvement of humans' habits while infected population ratio > behaviorTrigger
+behaviorFactor = 1.5 #Improvement of humans' habits while infected population ratio > behaviorTrigger
 
 #Government default response
 activeIsolation = False #Decide if a confirmed case is totally isolated by the government
@@ -29,10 +30,10 @@ testingASResponse = 0.01 #The probability for a asymptomatic human of being test
 govActionsMode = "normal" #Can be "normal" or "auto"
 govActionsAutoTrigger =  0.03 #Decide the infected population % that triggers auto government actions.
 govActionsAutoOff = 0.02 #Decide the infected population % that deactivates auto government actions.
-startCaseCount = 10 #Number of confirmed cases needed to start government actions
-actiosPeriod = 30 #Duration for government countermeasures in days
-infoFactor = 1.3 #Value to represent government awareness campaigns
-socialDistanceFactor = 1.3 #Value to represent control of social distance
+startCaseCount = 50 #Number of confirmed cases needed to start government actions
+actiosPeriod = 60 #Duration for government countermeasures in days
+infoFactor = 1.25 #Value to represent government awareness campaigns
+socialDistanceFactor = 1.5 #Value to represent control of social distance
 isolationFactor = 2.0 #Value to reduce number of human contacts
 exchangeFactor = 2.0 #Value to reduce human interchange between urban areas
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
@@ -63,10 +64,10 @@ for i in range(simulationsCount):
 	simulationName = simulationsName
 	simulationName = simulationsName + "_" + str(i)
 	if i == 0:
-		dt.saveConfigStart(simulationsPopulation, simulationsPeriod, simulationName, runGovActions, \
+		dt.saveConfigStart(simulationsPopulation, simulationsPeriod, simulationName, areaBDensity, runGovActions, \
 			govActions, govFailureList, autoIsolationThreshold, startingImmunity, behavior, behaviorTrigger, \
 			behaviorOff, behaviorFactor)
-	s = sim(simulationsPopulation, simulationsPeriod, i + 1, casesCeroCount, simulationName, \
+	s = sim(simulationsPopulation, simulationsPeriod, i + 1, casesCeroCount, simulationName, areaBDensity, \
 		runGovActions, govActions, govFailureList, autoIsolationThreshold, startingImmunity, behavior, \
 		behaviorTrigger, behaviorOff, behaviorFactor)
 	vz.getFileNames(simulationName)

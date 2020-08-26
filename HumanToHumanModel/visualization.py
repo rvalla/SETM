@@ -281,4 +281,5 @@ class Visualization():
 		testing = pd.DataFrame(columns=["Symptomatic", "Asymptomatic"])
 		testing["Symptomatic"]=iData[iData["Had symptoms?"]==True]["Was tested?"].value_counts()
 		testing["Asymptomatic"]=iData[iData["Had symptoms?"]==False]["Was tested?"].value_counts()
+		testing.sort_index(axis=0, ascending=True, inplace=True)
 		return testing
