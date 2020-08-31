@@ -734,6 +734,8 @@ class Simulation():
 		print("Deleting humans from previous population...", end="\r")
 		areaAHumans.clear()
 		areaBHumans.clear()
+		govActionsCycles.clear()
+		behaviorCycles.clear()
 		Simulation.restartV()
 		print("Humans from previous population deleted!        ", end="\n")
 		print("Erasing outbreak evolution data...", end="\r")

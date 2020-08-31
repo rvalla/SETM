@@ -1,0 +1,14 @@
+Human number,Infection number,Infection date,End date,Transmission,Age,Sex,Death risk factor,Is dead?,Incubation period,Total illness period,Is tested?,Was tested?,Had symptoms?,Was treated?
+539,1,1,9,0,77,Male,2.8032653061224484,False,6.0,9.0,False,False,False,False
+863,1,1,9,0,57,Male,1.5951020408163266,False,4.0,9.0,True,True,True,False
+1390,1,1,10,1,25,Female,1.0,False,4.0,10.0,True,True,True,True
+581,1,1,12,0,67,Male,2.117551020408163,False,6.0,11.0,True,True,True,True
+1900,1,1,12,1,14,Female,1.0,False,5.0,12.0,False,False,False,False
+1393,1,5,12,0,33,Female,1.00734693877551,False,3.0,7.0,False,False,True,False
+475,1,1,13,2,33,Female,1.00734693877551,False,6.0,13.0,False,False,False,False
+187,1,7,15,1,85,Female,3.4693877551020407,False,3.0,8.0,True,True,True,True
+408,1,12,20,1,82,Male,3.20734693877551,False,4.0,8.0,True,True,True,True
+1800,1,14,22,0,90,Male,3.9387755102040813,False,3.0,8.0,True,True,True,True
+1923,1,11,23,1,43,Female,1.137959183673469,False,4.0,12.0,True,True,True,True
+1942,1,17,24,1,49,Female,1.29469387755102,False,4.0,7.0,True,True,True,True
+208,1,21,39,0,29,Female,1.0,False,9.0,18.0,True,True,False,False
