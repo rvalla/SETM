@@ -1,0 +1,60 @@
+#################################
+SIMPLE EPIDEMIC TRANSMISION MODEL
+Human to human disease simulation
+---------------------------------
+---https://github/rvalla/SETM----
+#################################
+
+31082020_3K_360d_Gov00dAIAT040T09_0
+Population: 3000
+Period in days: 360
+Area B population density (relative to area A): 1.0
+Humans auto isolation threshold: 0.0
+Population immunity when simulation starts: 0.0%
+
+----Government base state
+Base info factor: 1.0
+Base isolation factor: 1.0
+Base social distance factor: 1.0
+Testing response threshold: 0.09
+Testing response threshold (asymptomatic humans): 0.005
+Active isolation: True
+Active tracking: True
+Active tracking threshold: 0.4
+Active tracking pressure weight: 1.0
+Health system colapse start: 0.001
+Health system colapse end: 0.1
+Health system colapse factor start: 1
+Health system colapse factor end: 5
+
+----Virus variables
+Base infection threshold: 0.1
+Base symptoms threshold: 0.4
+Base treatment threshold: 0.2
+Contagious fase shift from incubation end: 0
+Contagious factor when there are no symptoms: 0.2
+Maximum contagious factor when there are symptoms: 1.0
+Days of immunity after cure: 360
+Virus reinfection factor: 1.0
+Death rate for patients in treatment: 0.4
+Weight of death risk in symptoms: 0.7
+Weight of death risk in treatment: 0.6
+Death risk function start age: 30
+Death risk function end age: 100
+Death risk factor start: 1
+Death risk factor end: 5
+
+----Human general randomization
+Triangular ages distribution references: 0, 100, 26
+Triangular family size distribution references: 1, 5, 1.5
+Triangular careful/socialDistance factor distribution references: 0.8, 1.2, 1.0
+Triangular incubation/illness periods distribution references: 2, 10, 4
+
+----Human movement randomization
+Triangular contacts count distribution references: 1, 8, 3
+Triangular exchange humans distribution references: 4, 18, 8
+Relatives weights for government infoFactor and socialDistanceFactor: 2, 3
+
+----Simulation start
+5 infected humans were injected in urban area A.
+

@@ -16,7 +16,7 @@ Population immunity when simulation starts: 0.0%
 Base info factor: 1.0
 Base isolation factor: 1.0
 Base social distance factor: 1.0
-Testing response threshold: 0.09
+Testing response threshold: 0.07
 Testing response threshold (asymptomatic humans): 0.01
 Active isolation: True
 Active tracking: False
