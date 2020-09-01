@@ -727,7 +727,10 @@ class Simulation():
 			else:
 				startConfig.write(str(sinNumber) + ". Government actions cycles: " + str(govActionsC) + "\n")
 		if behaviorB == True:
-			startConfig.write(str(sinNumber) + ". Population behavior cycles: " + str(behaviorC) + "\n")
+			if (len(behaviorC) == 0):
+				startConfig.write(str(sinNumber) + ". Population behavior change was not triggered." + "\n")
+			else:
+				startConfig.write(str(sinNumber) + ". Population behavior cycles: " + str(behaviorC) + "\n")
 
 	#Deleting data and humans to run a new simulation
 	def deleteSimulation():
