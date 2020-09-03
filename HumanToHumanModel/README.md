@@ -37,7 +37,9 @@ the virus is, its base death rate, how many infected humans will have symptoms o
 and more.
 
 #### government.py
-The place where you can specify baseline variables related to government contingency measures.
+The place where the variables to manage contingency measures are saved. You can edit most of them in
+*humantohumanmodel.py*. Take into account thar some of the variables are fixed during all the simulations
+while some of them change when the contingency measures occurred.
 
 #### randomization.py
 The place where you can edit the probabilistic distribution of some of the atributes (population age

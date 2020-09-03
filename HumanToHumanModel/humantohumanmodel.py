@@ -4,26 +4,26 @@ from processingdata import ProcessingData as dt
 
 #General simulation configuration
 simulationsPeriod = 360
-simulationsPopulation = 3000 #Recommendation: Population > 500 to prevent randomization errors.
-simulationsCount = 1
-simulationsName = ""
+simulationsPopulation = 10000 #Recommendation: Population > 500 to prevent randomization errors.
+simulationsCount = 3
+simulationsName = "02092020_10K_360d_Opt"
 casesCeroCount = 5 #How many infected humans will be injected in urban area A
 areaBDensity = 1.0 #Population density in area B (relative to area A)
 startingImmunity = 0.0 #The proportion of the population which has immunity before the outbreak
 
 #Control of population behavior in response to the outbreak
 autoIsolationThreshold = 0.0 # [0,1] The probability of a human will auto-isolate himself when having symptoms
-behavior = False #Deciding if the outbreak will change humans behavior
+behavior = True #Deciding if the outbreak will change humans behavior
 behaviorTrigger = 0.004 # [0,1] Infected population percentage threshold which trigger behavior factor
 behaviorOff = 0.002 # [0,1] Infected population percentage threshold which deactivates behavior factor
-behaviorFactor = 1.5 # [1,inf) Improvement of humans' habits while infected population ratio > behaviorTrigger
+behaviorFactor = 1.25 # [1,inf) Improvement of humans' habits while infected population ratio > behaviorTrigger
 
 #Government default response
-activeIsolation = False #Decide if a confirmed case is totally isolated by the government
-activeTracking = False #Decide if government track tested humans close contacts to test and isolate them.
-activeTrackingThreshold = 0.3 # [0,1] The probability for government to recognize a closed contact.
+activeIsolation = True #Decide if a confirmed case is totally isolated by the government
+activeTracking = True #Decide if government track tested humans close contacts to test and isolate them.
+activeTrackingThreshold = 0.15 # [0,1] The probability for government to recognize a closed contact.
 activeTrackingPressureW = 1.0 # [0,inf) Control How the population infected ratio affects active tracking
-testingResponse = 0.04 # [0,1] The probability for a symptomatic human of being tested by the government each day
+testingResponse = 0.056 # [0,1] The probability for a symptomatic human of being tested by the government each day
 testingASResponse = 0.005 # [0,1] The probability for a asymptomatic human of being tested by the government each day
 
 #Government countermeasures
@@ -31,11 +31,11 @@ govActionsMode = "normal" #Can be "normal" or "auto"
 govActionsAutoTrigger =  0.004 # [0,1] Decide the infected population % that triggers auto government actions.
 govActionsAutoOff = 0.002 # [0,1] Decide the infected population % that deactivates auto government actions.
 startCaseCount = 50 # [1,population) Number of confirmed cases needed to start government actions
-actionsPeriod = 56 # [1, period) Duration for government countermeasures in days
+actionsPeriod = 28 # [1, period) Duration for government countermeasures in days
 infoFactor = 1.1 # (1, inf) Value to represent government awareness campaigns
 socialDistanceFactor = 1.25 # (1,inf) Value to represent control of social distance
-isolationFactor = 1.25 # (1,inf) Value to reduce number of human contacts
-exchangeFactor = 1.25 # (1,inf) Value to reduce human interchange between urban areas
+isolationFactor = 1.5 # (1,inf) Value to reduce number of human contacts
+exchangeFactor = 1.75 # (1,inf) Value to reduce human interchange between urban areas
 lockDown = False #Decide if government close urban areas (human exchange will not exist)
 
 #Government countermeasures failure
