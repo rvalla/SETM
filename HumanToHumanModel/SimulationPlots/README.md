@@ -8,7 +8,7 @@ another contagious desease.</br>
 
 #### Population visualization
 
-![Population](https://github.com/rvalla/SETM/raw/master/HumanToHumanModel/SimulationPlots/Population/02092020_10K_360d_Opt_1_population_.png)
+![Population](https://github.com/rvalla/SETM/raw/master/HumanToHumanModel/SimulationPlots/Population/02092020_10K_360d_Opt_1_population.png)
 
 In this chart you can read easily:
 
@@ -33,7 +33,7 @@ In this chart you can read easily:
 
 #### Infections visualization
 
-![Infections](https://github.com/rvalla/SETM/raw/master/HumanToHumanModel/SimulationPlots/Simulations/02092020_10K_360d_Opt_1_infections_.png)
+![Infections](https://github.com/rvalla/SETM/raw/master/HumanToHumanModel/SimulationPlots/Simulations/02092020_10K_360d_Opt_1_infections.png)
 
 In this chart you can read easily:
 
