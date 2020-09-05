@@ -1,0 +1,8 @@
+Human number,Infection number,Infection date,End date,Transmission,Age,Sex,Death risk factor,Is dead?,Incubation period,Total illness period,Is tested?,Was tested?,Had symptoms?,Was treated?
+2648,1,1,8,0,13,Male,1.0,False,4.0,8.0,False,False,False,False
+162,1,1,9,1,36,Male,1.0293877551020405,False,5.0,9.0,True,True,False,False
+1796,1,1,9,0,17,Female,1.0,False,4.0,9.0,True,True,False,False
+5017,1,1,11,0,28,Female,1.0,False,3.0,11.0,False,False,False,False
+2965,1,1,14,0,75,Male,2.6530612244897958,False,8.0,14.0,False,False,False,False
+7223,1,5,15,1,51,Male,1.3599999999999999,False,3.0,10.0,False,False,False,False
+1392,1,8,16,0,41,Male,1.0987755102040815,False,4.0,8.0,False,False,False,False

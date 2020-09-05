@@ -8,8 +8,8 @@ infectionsFile = ""
 #Let's make this charts beautiful
 defaultFont = "Oswald" #Change this if you don't like it or is not available in your system
 legendFont = "Myriad Pro" #Change this to edit legends' font 
-backgroundPlot = "lightgray" #Default background color for charts
-backgroundFigure = "gainsboro" #Default background color for figures
+backgroundPlot = "silver" #Default background color for charts
+backgroundFigure = "white" #Default background color for figures
 majorGridColor = "dimgrey" #Default colors for grids...
 minorGridColor = "dimgray"
 alphaMGC = 0.7
