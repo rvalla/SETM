@@ -1,0 +1,110 @@
+---
+layout: default
+---
+<hr class="red" />
+<hr class="green" />
+<hr class="blue" />
+<p></p>
+
+<p class="date">{{ page.date | date_to_string }}</p>
+<h1 class="blog">{{ page.title }}</h1>
+<p></p>
+
+{{ content }}
+
+<p></p>
+<hr class="red" />
+<hr class="green" />
+<hr class="blue" />
+<p></p>
+
+<p>If you are interested in the posts I haven't already write here is the blog's
+<a href="https://rvalla.github.io/SETM/feed_eng.xml">rss feed</a>. You can send your
+comments and questions to my <a href="mailto:rodrigovalla@protonmail.ch">mailbox</a> too.</p>
+
+<style>
+h1.blog{
+	color:#393939;
+	margin-bottom:0.2em;
+}
+p.date{
+	color:#393939;
+	margin-bottom:0.2em;
+}
+hr.gray {
+	margin-bottom: 0.2em;
+	margin-top: 0.2em;
+	margin-left: auto;
+	margin-right: auto;
+	height:3px;
+	border-width:0;
+	background-color:#c6c6c6;
+	width:100%;
+}
+hr.red {
+	margin-bottom: 0.2em;
+	margin-top: 0.2em;
+	margin-left: auto;
+	margin-right: auto;
+	height:3px;
+	border-width:0;
+	background-color:#a51b1a;
+	width:100%;
+}
+hr.green {
+	margin-bottom: 0.2em;
+	margin-top: 0.2em;
+	margin-left: auto;
+	margin-right: auto;
+	height:3px;
+	border-width:0;
+	background-color:#3f7038;
+	width:100%;
+}
+hr.blue {
+	margin-bottom: 0.2em;
+	margin-top: 0.2em;
+	margin-left: auto;
+	margin-right: auto;
+	height:3px;
+	border-width:0;
+	background-color:#2176b4;
+	width:100%;
+}
+img.gray {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+	border: 3px solid #c6c6c6;
+  	border-radius: 4px;
+ 	padding: 5px;
+}
+img.red {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+	border: 3px solid #a51b1a;
+  	border-radius: 4px;
+ 	padding: 5px;
+}
+img.green {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+	border: 3px solid #3f7038;
+  	border-radius: 4px;
+ 	padding: 5px;
+}
+img.blue {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+	border: 3px solid #2176b4;
+  	border-radius: 4px;
+ 	padding: 5px;
+}
+</style>

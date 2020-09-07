@@ -5,7 +5,9 @@ permalink: /blog/:year/:title/
 email: rodrigovalla@protonmail.ch
 description: >- # this means to ignore newlines until "baseurl:"
   <b>S</b>imple <b>E</b>pidemic <b>T</b>ransmision <b>M</b>odels. Simple models coded in python to
-  simulate the spread of some model desease.
+  simulate the spread of diferent deseases (<a href="https://rvalla.github.io/SETM/index">eng</a>).<br>
+  Modelos sencillos para simular epidemias de diferentes enfermedades infecciosas 
+  (<a href="https://rvalla.github.io/SETM/index_es">es</a>).
 twitter_username: rvallafoto
 github_username:  rvalla
 logo: /assets/img/RepoCard.jpg

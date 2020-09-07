@@ -1,8 +1,16 @@
 ---
-layout: default
+layout: index
 ---
 <h1>SETM: Blog</h1>
-<ul>
+
+<p>Here I share some of the problems I faced while writing **SETM** computational models or things I learnt
+studying results of its simulations. The models sometimes are simple but there lots of tiny details in
+everithing. If you are interested in other projects or ideas you can take a look of
+<a href="https://rvalla.github.io/eng/blog_eng">algorithmic Me: blog</a>.</p>
+
+
+<h3>posts list:</h3>
+
 	{% for post in site.posts %}
 		{% for tag in post.tags %}
 			{% if tag == "english" %}
@@ -11,5 +19,4 @@ layout: default
 			{{post.excerpt}}</p>
 			{% endif %}
 		{% endfor %}
-	{% endfor %}
-</ul>
+	{% endfor %} d

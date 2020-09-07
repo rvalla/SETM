@@ -1,3 +1,3 @@
-# setm.github.io
+# rvalla.github.io/SETM
 Simple epidemic transmision models site on GitHub
-[setm.github.io](https://rvalla.github.io/setm.github.io/)
+[SETM site](https://rvalla.github.io/SETM/)

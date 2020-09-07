@@ -2,7 +2,14 @@
 layout: default
 ---
 <h1>SETM: Blog</h1>
-<ul>
+
+<p>Aquí comparto algunos de los problemas que tuve mientras escribía el código de los modelos computacionales
+de **SETM** o cosas que aprendí analizando los resultados de sus simulaciones. Los modelos a veces son sencillos
+pero en todo existen montones de pequeños detalles. Si te interesan otros proyectos o ideas podés visitar
+<a href="https://rvalla.github.io/es/blog_es">algorithmic Me: blog</a>.</p>
+
+<h3>lista de publicaciones</h3>
+
 	{% for post in site.posts %}
 		{% for tag in post.tags %}
 			{% if tag == "spanish" %}
@@ -12,4 +19,3 @@ layout: default
 			{% endif %}
 		{% endfor %}
 	{% endfor %}
-</ul>
