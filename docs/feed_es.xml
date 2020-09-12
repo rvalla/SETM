@@ -6,8 +6,8 @@ layout: none
 	<channel>
 		<title>SETM: blog (es)</title>
 		<description>Acerca de mis modelos para simular la transmisión de enfermedades infecciosas.</description>
-		<link>{{ site.baseurl }}</link>
-		<atom:link href="{{ site.baseurl }}/feed_es.xml" rel="self" type="application/rss+xml" />
+		<link>{{ site.url }}{{ site.baseurl }}</link>
+		<atom:link href="{{ site.url }}{{ site.baseurl }}/feed_es.xml" rel="self" type="application/rss+xml" />
 		{% for post in site.posts limit:25 %}
 			{% for tag in post.tags %}
 				{% if tag == "spanish" %}
@@ -16,8 +16,8 @@ layout: none
 						<description>{{ post.excerpt | xml_escape }}</description>
 						<pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
 						<author>rodrigovalla@protonmail.ch (Rodrigo Valla)</author>
-						<link>{{ site.baseurl }}{{ post.url }}</link>
-						<guid isPermaLink="true">{{ site.baseurl }}{{ post.url }}</guid>
+						<link>{{ site.url }}{{ site.baseurl }}{{ post.url }}</link>
+						<guid isPermaLink="true">{{ site.url }}{{ site.baseurl }}{{ post.url }}</guid>
 					</item>
 				{% endif %}
 			{% endfor %}
