@@ -1,3 +1,7 @@
+---
+layout: index
+title:  SETM
+---
 At the beginning of 2020 I finally decided to write code in [Python](https://www.python.org). I had nothing
 special to do until *SARS-CoV-2* spread all over the world. So I propose myself to code two simple
 computational models to simulate not only the spread of some disease but the effect of government contingency

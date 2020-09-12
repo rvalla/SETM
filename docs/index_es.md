@@ -1,3 +1,7 @@
+---
+layout: index
+title:  SETM
+---
 A principios de 2020 finalmente me decidí a escribir código en [Python](https://www.python.org). No tenía
 nada especial para hacer hasta que el *SARS-CoV-2* logró alcanzar todos los rincones del planeta. Así que
 me propuse programar un par de modelos sencillos para simular no sólo la evolución de una epidemia en una
