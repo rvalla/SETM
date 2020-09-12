@@ -7,7 +7,7 @@ nada especial para hacer hasta que el *SARS-CoV-2* logró alcanzar todos los rin
 me propuse programar un par de modelos sencillos para simular no sólo la evolución de una epidemia en una
 población sino también los efectos de distintas medidas de contingencia que las autoridades sanitarias de
 un país pueden tomar.  
-El proyecto se llama **SETM** (**S**imple **E**pidemic **T**ransmission **M**odels). Hablé de un par de
+El proyecto se llama **S**imple **E**pidemic **T**ransmission **M**odels (**SETM**). Hablé de un par de
 modelos porque me propuse diseñar dos. Uno para simular epidemias de enfermedades que se transmiten entre
 personas (inspirado especialmente en la epidemia de *COVID-19*) y otro para simular enfermedades que
 se transmiten a través de un vector (inspirado en el *Dengue*).  
@@ -20,8 +20,9 @@ y <a rel="me" href="https://fosstodon.org/@rvalla">mastodon</a>. Si querés sabe
 <hr class="red" />
 <hr class="green" />
 <hr class="blue" />
+<p></p>
 
-### Modelo Humano > Humano
+## Modelo Humano > Humano
 
 El modelo es sencillo. Existe una población de *humanos* dividida en dos *ciudades*. Los *humanos infectados*
 cada *día* entran en contacto con otros *humanos*. Una serie de cálculos decide si se contagian o no. El *virus*
@@ -40,7 +41,7 @@ guardan automáticamente una serie de gráficos en la carpeta
 [/SimulationPlots](https://github.com/rvalla/SETM/tree/master/HumanToHumanModel/SimulationPlots) para
 visualizar los resultados rápidamente.  
 
-#### Para seguir leyendo (en preparación):
+### Para seguir leyendo (en preparación):
 
 Por supuesto fui cambiando cosas del modelo con el tiempo. Mejorando mucho los gráficos automáticos
 e introduciendo varios cambios en el algoritmo (algunas veces para corregir errores o para guardar datos a los
@@ -64,8 +65,9 @@ Pronto podrás conocer más detalles sobre el modelo y cómo funciona (siempre p
 <hr class="red" />
 <hr class="green" />
 <hr class="blue" />
+<p></p>
 
-### Modelo Humano > Vector > Humano
+## Modelo Humano > Vector > Humano
 
 Sucesivas mejores en el modelo *Humano>Humano* han hecho que todavía no haya avanzado con el modelo inspirado
 en el *Dengue*. Seguramente lo haga el en futuro. El *mosquito* tiene características distintas al *humano* y

@@ -6,7 +6,7 @@ At the beginning of 2020 I finally decided to write code in [Python](https://www
 special to do until *SARS-CoV-2* spread all over the world. So I propose myself to code two simple
 computational models to simulate not only the spread of some disease but the effect of government contingency
 measures and social behavioral changes.  
-I named the project **SETM** (**S**imple **E**pidemic **T**ransmission **M**odels). There are two models
+I named the project **S**imple **E**pidemic **T**ransmission **M**odels (**SETM**). There are two models
 because I wanted to learn about the spread of viruses transmitted between humans and other in which some
 vector take part. They are inspired in *COVID-19* and *Dengue fever* respectively.  
 If you want to run your own simulations you will need *Python 3* with *Pandas* and *Matplotlib*. You can
@@ -18,8 +18,9 @@ or <a rel="me" href="https://fosstodon.org/@rvalla">mastodon</a>. You can read m
 <hr class="red" />
 <hr class="green" />
 <hr class="blue" />
+<p></p>
 
-### Human > Human Model
+## Human > Human Model
 
 The model is simple. There is a *human population* divided in two *cities*. Each *day*, the *Infected humans*
 make contact with other *humans*. A series of calculations decide if they get infected or not. The *virus*
@@ -36,14 +37,14 @@ in [/SimulationData](https://github.com/rvalla/SETM/tree/master/HumanToHumanMode
 Charts are automatically saved in
 [/SimulationPlots](https://github.com/rvalla/SETM/tree/master/HumanToHumanModel/SimulationPlots) folder.  
 
-#### Continue reading (under construction)
+### Continue reading (under construction)
 
 Of course some details of the model has changed over time. Sometimes intending to obtain better charts and
 save more data, sometimes to solve errors, sometimes to improve the algorithm. I learnt a lot while thinking
 how to implement the model and writing the code and also analyzing its results. The model is simple but not
 so simple. It can be useful to think about the *problem* if and only if its results are interpreted carefully.  
 I share some of the results which I find interesting and ideas about implementation and modeling challenges
-in a [blog](https://rvalla.github.io/SETM/es/blog_es).  
+in a [blog](https://rvalla.github.io/SETM/eng/blog_eng).  
 You will be able to read more details about the model and how it works here (remember that you can always jump
 to the [código](https://github.com/rvalla/SETM)):
 
@@ -57,8 +58,9 @@ to the [código](https://github.com/rvalla/SETM)):
 <hr class="red" />
 <hr class="green" />
 <hr class="blue" />
+<p></p>
 
-### Human > Vector > Human Model
+## Human > Vector > Human Model
 
 Continuous improvements in the *human>human* model have delayed my work on the model inspired by *Dengue fever*.
 But eventually It will be available. A *mosquito* is very different from a *human*, has its own lifecycle.
