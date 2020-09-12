@@ -1,7 +1,6 @@
 theme: jekyll-theme-minimal
 title: SETM
 timezone: America/Argentina/Buenos_Aires
-url: rvalla.github.io/SETM
 permalink: /blog/:year/:title/
 email: rodrigovalla@protonmail.ch
 description: >- # this means to ignore newlines until "baseurl:"
