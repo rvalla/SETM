@@ -46,7 +46,7 @@ so simple. It can be useful to think about the *problem* if and only if its resu
 I share some of the results which I find interesting and ideas about implementation and modeling challenges
 in a [blog](https://rvalla.github.io/SETM/eng/blog_eng).  
 You will be able to read more details about the model and how it works here (remember that you can always jump
-to the [código](https://github.com/rvalla/SETM)):
+to the [code](https://github.com/rvalla/SETM)):
 
 - How to run simulations?
 - How to read the results?

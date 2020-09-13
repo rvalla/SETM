@@ -25,8 +25,7 @@ social responses in its evolution. I learnt a lot about the problem and I was su
 results.
 
 ![chart](https://rvalla.github.io/SETM/assets/img/2020-09-12-Simular-para-aprender.png)
-> Para poder leer rápido los resultados trabajé mucho en los gráficos automáticos que se crean después
-de cada simulación.
+> Charts to read the results easily are saved after each simulation automatically. I worked a lot in them.
 
 I said I enjoy to learn new things so I coded the software in [Python](https://www.python.org). A programming
 language I had not used a lot. The main goal was always to make a model which serves to study a dynamic problem
