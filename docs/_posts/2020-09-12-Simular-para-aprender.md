@@ -25,7 +25,7 @@ tomaran los gobiernos y los individuos de una población. Aprendí un montón de
 sorprendí un montón de veces.  
 
 
-<img class="red" src="/assets/img/2020-09-12-Simular-para-aprender.png" />
+<img class="red" src="/SETM/assets/img/2020-09-12-Simular-para-aprender.png" />
 > Para poder leer rápido los resultados trabajé mucho en los gráficos automáticos que se crean después
 de cada simulación.
 
