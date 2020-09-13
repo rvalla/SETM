@@ -24,7 +24,7 @@ computational model which allowed me to question myself about the outbreak and t
 social responses in its evolution. I learnt a lot about the problem and I was surprised sometimes by the 
 results.
 
-![chart](https://rvalla.github.io/SETM/assets/img/2020-09-12-Simular-para-aprender.png)
+<img class="red" src="/assets/img/2020-09-12-Simular-para-aprender.png" />
 > Charts to read the results easily are saved after each simulation automatically. I worked a lot in them.
 
 I said I enjoy to learn new things so I coded the software in [Python](https://www.python.org). A programming
