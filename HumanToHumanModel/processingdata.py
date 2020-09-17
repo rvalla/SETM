@@ -1,23 +1,6 @@
-import pandas as pd
-
 class ProcessingData():
-	"Functions to process, print and save simulations' data"
-	
-	def printHuman(human):
-		print("_________________")
-		print("-- Human number: " + str(human.humanNumber) + "	Family number: " +
-				str(human.familyNumber))
-		print("-- Age: " + str(human.age) +  "	" + "Sex: " + str(human.sex))
-		print("-- Infected: " + str(human.isInfected) + " Was tested?: " + str(human.wasTested))
-		print("-- Infection data: " + str(human.incubationPeriod) + ", " +
-				str(human.illnessPeriod) + ", " + str(human.evolutionState))
-		print("-- Variable factors: " + str(round(human.carefulFactor, 2)) + ", " +
-				str(round(human.socialDistanceFactor, 2)) + ", " + str(round(human.deathRiskFactor, 2)))
-		print("-- Will need treatment: " + str(human.willNeedTreatment) + ", Will be Symptomatic: " +
-				str(human.willBeSymptomatic))
-		print("-- Is symptomatic: " + str(human.isSymptomatic) + ", Contagious factor: " +
-				str(human.contagiousFactor))
-				
+	"Functions to process, print and save simulations data"
+
 	def saveConfigStart(population, period, simulationName, areaBDensity, govB, govActions, govFailure, \
 			autoIsolationThreshold, startingImmunity, behaviorB, behaviorTrigger, behaviorOff, behaviorFactor):
 		startConfig = open("SimulationData/" + simulationName + ".txt", "a")

@@ -1,42 +1,39 @@
-import matplotlib.pyplot as plt
-import random as random
-
-#About population age triangular distribution
-population_age_start = 0
-population_age_end = 100
-population_age_mode = 26
-
-#About family size triangular distribution
-family_size_start = 1
-family_size_end = 5
-family_size_mode = 1.5
-
-#Limits for triangular distribution for factors
-factor_start = 0.8
-factor_end = 1.2
-factor_mode = 1.0
-
-#Limits for illness development
-illness_start = 2
-illness_end = 10
-illness_mode = 4
-
-#Limits for triangular distribution for contacts
-contacts_start = 1
-contacts_end = 8
-contacts_mode = 3
-
-#Limits for triangular distribution for human exchange between urban areas
-exchange_start = 4
-exchange_end = 18
-exchange_mode = 8
-
-#Adjusting relative weights for government infoFactor and socialDistanceFactor
-infoFactorW = 2
-socialDistanceW = 3
-
 class Randomization():
-	"Functions to work with the randomization of elements for simulations"
+	"Functions to work with the randomization of variables in simulations"
+	
+	#About population age triangular distribution
+	population_age_start = 0
+	population_age_end = 100
+	population_age_mode = 26
+
+	#About family size triangular distribution
+	family_size_start = 1
+	family_size_end = 5
+	family_size_mode = 1.5
+
+	#Limits for triangular distribution for factors
+	factor_start = 0.8
+	factor_end = 1.2
+	factor_mode = 1.0
+
+	#Limits for illness development
+	illness_start = 2
+	illness_end = 10
+	illness_mode = 4
+
+	#Limits for triangular distribution for contacts
+	contacts_start = 1
+	contacts_end = 8
+	contacts_mode = 3
+
+	#Limits for triangular distribution for human exchange between urban areas
+	exchange_start = 4
+	exchange_end = 18
+	exchange_mode = 8
+
+	#Adjusting relative weights for government infoFactor and socialDistanceFactor
+	infoFactorW = 2
+	socialDistanceW = 3
 	
 	def isCarefulAverage(infectedHuman, human):
 		a = (infectedHuman.carefulFactor + human.carefulFactor) / 2
@@ -47,7 +44,7 @@ class Randomization():
 		return a
 	
 	def setFamilySize():
-		s = random.triangular(family_size_start, family_size_end, family_size_mode)
+		s = random.triangular(Randomization.family_size_start, Randomization.family_size_end, Randomization.family_size_mode)
 		s = round(s)
 		return s
 	
@@ -56,7 +53,7 @@ class Randomization():
 		return sex
 	
 	def setAge():
-		a = random.triangular(population_age_start, population_age_end, population_age_mode)
+		a = random.triangular(Randomization.population_age_start, Randomization.population_age_end, Randomization.population_age_mode)
 		a = round(a)
 		return a
 	
@@ -73,30 +70,30 @@ class Randomization():
 		return r
 	
 	def setCarefulFactor():
-		f = random.triangular(factor_start, factor_end, factor_mode)
+		f = random.triangular(Randomization.factor_start, Randomization.factor_end, Randomization.factor_mode)
 		return f
 	
 	def setSocialDistanceFactor():
-		f = random.triangular(factor_start, factor_end,	factor_mode)
+		f = random.triangular(Randomization.factor_start, Randomization.factor_end,	Randomization.factor_mode)
 		return f
 	
 	def setIllnessDevelopment():
-		i = random.triangular(illness_start, illness_end, illness_mode)
+		i = random.triangular(Randomization.illness_start, Randomization.illness_end, Randomization.illness_mode)
 		return(round(i, 0))
 	
 	def setContactsQuantity(govIsolationFactor, density):
-		c = random.triangular(contacts_start, contacts_end, contacts_mode)
+		c = random.triangular(Randomization.contacts_start, Randomization.contacts_end, Randomization.contacts_mode)
 		c = c / govIsolationFactor * density
 		return(int(c))
 	
 	def setExchangeCount(govIsolationFactor):
-		c = random.triangular(exchange_start, exchange_end, exchange_mode)
+		c = random.triangular(Randomization.exchange_start, Randomization.exchange_end, Randomization.exchange_mode)
 		c = c / govIsolationFactor
 		return (int(c))
 	
 	#Determining how much will change the random number before deciding infection...
 	def getInfectionThresholdVar(i, d):
-		t = (i *  infoFactorW + d * socialDistanceW) / (infoFactorW + socialDistanceW)
+		t = (i *  Randomization.infoFactorW + d * Randomization.socialDistanceW) / (Randomization.infoFactorW + Randomization.socialDistanceW)
 		return t
 	
 	def saveSimulationConfig(simulationName):
@@ -120,3 +117,9 @@ class Randomization():
 						str(infoFactorW) + ", " + str(socialDistanceW) + "\n")
 		rdConfig.write("" + "\n")
 		rdConfig.close()
+	
+	def __str__(self):
+		return "----------------------------------\n" + \
+				"--- SETM: Human to human model ---\n" + \
+				"--- https://github/rvalla/SETM ---\n" + \
+				"---------- Randomization ---------\n" + \

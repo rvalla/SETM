@@ -1,12 +1,16 @@
+import random as random
+import pandas as pd
+import matplotlib.pyplot as plt
 from simulation import Simulation as sim
-from visualization import Visualization as vz
-from processingdata import ProcessingData as dt
+from visualization import Visualization as viz
+from processingdata import ProcessingData as dat
+from virus import Virus as vir
 
 #General simulation configuration
 simulationsPeriod = 360
-simulationsPopulation = 5000 #Recommendation: Population > 500 to prevent randomization errors.
+simulationsPopulation = 1000 #Recommendation: Population > 500 to prevent randomization errors.
 simulationsCount = 3
-simulationsName = "04092020_5K_360d_"
+simulationsName = "saraza"
 casesCeroCount = 5 #How many infected humans will be injected in urban area A
 areaBDensity = 1.0 #Population density in area B (relative to area A)
 startingImmunity = 0.0 #The proportion of the population which has immunity before the outbreak
@@ -69,7 +73,7 @@ for i in range(simulationsCount):
 			behaviorOff, behaviorFactor)
 	s = sim(simulationsPopulation, simulationsPeriod, i + 1, casesCeroCount, simulationName, areaBDensity, \
 		runGovActions, govActions, govFailureList, autoIsolationThreshold, startingImmunity, behavior, \
-		behaviorTrigger, behaviorOff, behaviorFactor)
+		behaviorTrigger, behaviorOff, behaviorFactor, vr.Virus())
 	vz.getFileNames(simulationName)
 	vz.populationVisualization(simulationName)
 	govActionsCycles = sim.getGovActionsCycles()

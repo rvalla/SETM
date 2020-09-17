@@ -2,7 +2,7 @@ from human import Human as hn
 from randomization import Randomization as rd
 from governmentactions import GovernmentActions as gov
 from processingdata import ProcessingData as dt
-from virus import Virus as vr
+#from virus import Virus as vr
 import pandas as pd
 import time as tm
 
@@ -12,6 +12,8 @@ period = 0
 areaBDensity = 1.0
 behavior = False
 behaviorCycles = []
+
+vr
 
 #Representing two separate urban areas
 areaAHumans = []
@@ -77,7 +79,9 @@ class Simulation():
 	"Structuring one epidemic simulation"
 	def __init__(self, populationcount, periodindays, simNumber, casesCero, simulationName, bDensity, \
 					govActions, govActionsList, govFailureList, autoIsolationThreshold, startingImmunity, \
-					behaviorB, behaviorTrigger, behaviorOff, behaviorFactor):
+					behaviorB, behaviorTrigger, behaviorOff, behaviorFactor, virus):
+		global vr
+		vr = virus
 		
 		if simNumber > 1: #We need to clean some variables
 			Simulation.deleteSimulation()

@@ -45,3 +45,18 @@ class Human():
 		#Boolean to define if human was diagnosed
 		self.wasTested = False
 		self.isTested = False
+	
+	def __str__(self):
+		return "----------------------------------\n" + \
+				"--- SETM: Human to human model ---\n" + \
+				"--- https://github/rvalla/SETM ---\n" + \
+				"-------------- Human -------------\n" + \
+				"Human number: " + str(self.humanNumber) + "\n" + \
+				"Family number: " + str(self.familyNumber) + "\n" + \
+				"Age: " + str(self.age) +  ", Sex: " + str(self.sex) + "\n" + \
+				"Infected: " + str(self.isInfected) + ", Was tested?: " + str(self.wasTested) + "\n" + \
+				"Had symptoms: " + str(self.isSymptomatic) + ", Need treatment?: " + str(self.willNeedTreatment) + "\n" + \
+				"Infection data: " +  str(self.incubationPeriod) + ", " + str(self.illnessPeriod) + ", " + \
+				str(self.evolutionState) + "\n" + \
+				"Behavior and risk: " + str(round(self.carefulFactor, 2)) + ", " + \
+				str(round(self.socialDistanceFactor, 2)) + ", " + str(round(self.deathRiskFactor, 2))

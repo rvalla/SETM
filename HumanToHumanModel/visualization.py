@@ -1,10 +1,3 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-
-populationFile = ""
-simulationFile = ""
-infectionsFile = ""
-
 #Let's make this charts beautiful
 defaultFont = "Oswald" #Change this if you don't like it or is not available in your system
 legendFont = "Myriad Pro" #Change this to edit legends' font 
@@ -23,18 +16,6 @@ plotColors = ["orange", "tab:red", "tab:blue", "limegreen", "indianred", "teal",
 paintColors = ["seagreen", "tab:red"]
 
 class Visualization():
-
-	def getFileNames(simulationName):
-		global populationFile
-		populationFile = "SimulationData/Population/" + simulationName + "_population"
-		global simulationFile
-		simulationFile = "SimulationData/Simulations/" + simulationName
-		global infectionsFile
-		infectionsFile = "SimulationData/Infections/" + simulationName + "_infections"
-	
-	def loadFile(fileName):
-		dataFrame = pd.read_csv(fileName)
-		return dataFrame
 	
 	def gridsAndBackground():
 		plt.grid(which='both', axis='both')
@@ -70,8 +51,8 @@ class Visualization():
 		ylim.append(limit)
 		return ylim
 	
-	def simulationVisualization(simulationName, govActions, govActionsCycles, behavior, behaviorCycles, simulationsPopulation):
-		simulationData = Visualization.loadFile(simulationFile + ".csv")			
+	def simulationVisualization(simulationName, simulationData, govActions, govActionsCycles, behavior, \
+								behaviorCycles, simulationsPopulation):
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
 		figure.suptitle("Results for " + simulationName, fontsize=13, fontname=defaultFont)
 		total = plt.subplot2grid((3, 2), (0, 0), colspan=2)
@@ -139,8 +120,7 @@ class Visualization():
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Simulations/" + simulationName + ".png", facecolor=figure.get_facecolor())
 	
-	def infectionsVisualization(simulationName, period, govActions, govActionsCycles, behavior, behaviorCycles):
-		infectionsData = Visualization.loadFile(infectionsFile + ".csv")		
+	def infectionsVisualization(simulationName, infectionsData, period, govActions, govActionsCycles, behavior, behaviorCycles):
 		figure = plt.figure(num=None, figsize=(9, 6), dpi=imageResolution, facecolor=backgroundFigure, edgecolor='k')
 		figure.suptitle("Infections in " + simulationName, fontsize=13, fontname=defaultFont)
 		incubation = plt.subplot2grid((4, 4), (0, 0), colspan=2)
@@ -198,8 +178,7 @@ class Visualization():
 		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 		plt.savefig("SimulationPlots/Infections/" + simulationName + "_infections.png", facecolor=figure.get_facecolor())
 	
-	def populationVisualization(simulationName):
-		populationData = Visualization.loadFile(populationFile + ".csv")		
+	def populationVisualization(simulationName, populationData):
 		figure = plt.figure(num=None, figsize=(8, 6), dpi=imageResolution, facecolor=backgroundFigure)
 		figure.suptitle("Population summary: " + simulationName, fontsize=13, fontname=defaultFont)
 		ageDistribution = plt.subplot2grid((4, 2), (0, 0), rowspan=4)
